@@ -456,9 +456,9 @@ select option{background:#1a1d2e;}
             <tbody id="aLevhaTbody"></tbody>
           </table>
           <div class="add-form">
-            <div class="f"><label>En</label><input type="number" id="naEn" placeholder="620"/></div>
-            <div class="f"><label>Boy</label><input type="number" id="naBoy" placeholder="2480"/></div>
-            <div class="f"><label>Kal.(mm)</label><input type="number" id="naKal" placeholder="2.5" step="0.1"/></div>
+            <div class="f"><label>En</label><input type="number" id="naEn" placeholder="620" oninput="levhaKgPlaceholder()"/></div>
+            <div class="f"><label>Boy</label><input type="number" id="naBoy" placeholder="2480" oninput="levhaKgPlaceholder()"/></div>
+            <div class="f"><label>Kal.(mm)</label><input type="number" id="naKal" placeholder="2.5" step="0.1" oninput="levhaKgPlaceholder()"/></div>
             <div class="f"><label>Kg</label><input type="number" id="naKg" placeholder="30.5" step="0.01"/></div>
             <div class="f"><label>€/kg</label><input type="number" id="naKgE" placeholder="2.10" step="0.01"/></div>
             <div class="f"><label>Doğr.€</label><input type="number" id="naDogru" placeholder="12.10" step="0.01"/></div>
@@ -658,14 +658,17 @@ function levhaListeRender(){
   const el=document.getElementById('levhaListeEl');
   el.innerHTML=levhalar.map((l,i)=>{
     const olcu=`${l.en}×${l.boy}`;
-    const kg=l.kg?`${l.kg} kg`:'— kg';
-    const fiyat=l.topEur?`€${l.topEur.toFixed(2)}`:'—';
+    const hesapKg=kgHesapla(l.en,l.boy,l.kalinlik);
+    const kgStr=l.kg?`${l.kg} kg`:`~${hesapKg.toFixed(1)} kg`;
+    const kgRenk=l.kg?'':'color:var(--amber)';
+    const topEur=levhaTopEur(l);
+    const fiyat=topEur?`€${topEur.toFixed(2)}`:'—';
     const kgf=l.kgEur?`€${l.kgEur}/kg`:'—';
     return `<div class="levha-item" id="li${i}" onclick="levhaSecListeden(${i})">
       <div class="lradio"></div>
       <div class="li-info">
         <div class="title">${olcu} mm<span class="kal-chip">${l.kalinlik}mm</span></div>
-        <div class="sub">${kg} · ${kgf} · Doğr: €${l.dograEur.toFixed(2)}</div>
+        <div class="sub"><span style="${kgRenk}">${kgStr}</span> · ${kgf} · Doğr: €${l.dograEur.toFixed(2)}</div>
       </div>
       <div class="li-price">
         <div class="big">${fiyat}</div>
@@ -734,10 +737,11 @@ function getLevhaBilgisi(){
   const en=parseFloat(document.getElementById('mEn').value)||0;
   const boy=parseFloat(document.getElementById('mBoy').value)||0;
   const kal=parseFloat(document.getElementById('mKal').value)||0;
-  const kg=parseFloat(document.getElementById('mKg').value)||0;
+  const kgGirilen=parseFloat(document.getElementById('mKg').value)||0;
   const kgEur=parseFloat(document.getElementById('mKgEur').value)||0;
   const dograEur=parseFloat(document.getElementById('mDogru').value)||0;
-  if(!en||!boy||!kal||!kg||!kgEur){return null;}
+  if(!en||!boy||!kal||!kgEur){return null;}
+  const kg=kgGirilen||kgHesapla(en,boy,kal);
   return{en,boy,kalinlik:kal,kg,kgEur,topEur:kg*kgEur,dograEur};
 }
 
@@ -830,9 +834,8 @@ function hesapla(){
     testereler.push({tip,cap,dis,adet,lazer,alan,topAlan:alan*adet});
   }
   const genelAlan=testereler.reduce((s,t)=>s+t.topAlan,0);
-  let levhaMalBirim=levha.topEur;
-  if(!levhaMalBirim&&levha.kg&&levha.kgEur) levhaMalBirim=levha.kg*levha.kgEur;
-  if(!levhaMalBirim){alert('Levha toplam maliyeti hesaplanamadı.');return;}
+  let levhaMalBirim=levhaTopEur(levha);
+  if(!levhaMalBirim){alert('Levha toplam maliyeti hesaplanamadı. Lütfen €/kg veya toplam € girin.');return;}
   const levhaMal=levhaMalBirim*levhaAdedi;           // toplam levha maliyeti
   const dograMal=(levha.dograEur||0)*levhaAdedi;     // toplam doğrultma maliyeti
   const sonuclar=testereler.map(t=>{
@@ -849,6 +852,20 @@ function hesapla(){
 const E=v=>'€'+v.toFixed(4);
 const E2=v=>'€'+v.toFixed(2);
 const pct=v=>(v*100).toFixed(1)+'%';
+
+/* ══ ÇELİK AĞIRLIK HESABI ══ */
+/* Yoğunluk: 7.85 g/cm³ | Boyutlar mm cinsinden */
+function kgHesapla(en,boy,kal){
+  return en * boy * kal * 7.85 / 1000000;
+}
+function levhaKg(l){
+  return l.kg || kgHesapla(l.en, l.boy, l.kalinlik);
+}
+function levhaTopEur(l){
+  if(l.topEur) return l.topEur;
+  if(l.kgEur) return levhaKg(l) * l.kgEur;
+  return null;
+}
 
 /* ══ UĞUR VERİSİ ══ */
 const UGUR_D=[
@@ -1025,17 +1042,15 @@ function adminTab(t){
 }
 
 /* ══ VERİ AKTARIM ══ */
-async function htmlIndir(){
+function htmlIndir(){
   const sonucEl=document.getElementById('aktarSonuc');
   try{
-    const resp=await fetch(window.location.href);
-    if(!resp.ok) throw new Error('Sayfa kaynağı alınamadı');
-    let html=await resp.text();
-
     const levhalar=gL();
     const lazerler=gLz();
     const ugur=gU();
     const newVersion=DATA_VERSIYON+1;
+
+    let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 
     // Veri dizilerini güncelle
     html=html.replace(/const LEVHA_D=\[[\s\S]*?\];/,'const LEVHA_D='+JSON.stringify(levhalar)+';');
@@ -1047,7 +1062,7 @@ async function htmlIndir(){
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
-    a.download=document.location.pathname.split('/').pop()||'testere_maliyet.html';
+    a.download=document.location.pathname.split('/').pop()||'celik_levha_maliyet.html';
     a.click();
     URL.revokeObjectURL(a.href);
 
@@ -1127,7 +1142,7 @@ function aLevhaDoldur(){
     <tr>
       <td style="white-space:nowrap;">${l.en}×${l.boy}</td>
       <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLevhaG(${i},'kalinlik',this.value)" style="width:60px;"/></td>
-      <td><input type="number" value="${l.kg||''}" step="0.01" onchange="aLevhaG(${i},'kg',this.value)" style="width:65px;"/></td>
+      <td><input type="number" value="${l.kg||''}" step="0.01" placeholder="~${kgHesapla(l.en,l.boy,l.kalinlik).toFixed(2)}" onchange="aLevhaG(${i},'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"/></td>
       <td><input type="number" value="${l.kgEur||''}" step="0.01" onchange="aLevhaG(${i},'kgEur',this.value)" style="width:60px;"/></td>
       <td><input type="number" value="${l.topEur||''}" step="0.01" onchange="aLevhaG(${i},'topEur',this.value)" style="width:70px;"/></td>
       <td><input type="number" value="${l.dograEur}" step="0.01" onchange="aLevhaG(${i},'dograEur',this.value)" style="width:65px;"/></td>
@@ -1137,18 +1152,28 @@ function aLevhaDoldur(){
 }
 function aLevhaG(i,k,v){const d=gL();d[i][k]=v?parseFloat(v):null;sL(d);}
 function aLevhaSil(i){if(!confirm('Silinsin mi?'))return;const d=gL();d.splice(i,1);sL(d);aLevhaDoldur();levhaListeRender();}
+function levhaKgPlaceholder(){
+  const en=parseFloat(document.getElementById('naEn').value)||0;
+  const boy=parseFloat(document.getElementById('naBoy').value)||0;
+  const kal=parseFloat(document.getElementById('naKal').value)||0;
+  const el=document.getElementById('naKg');
+  if(en&&boy&&kal) el.placeholder='~'+kgHesapla(en,boy,kal).toFixed(2)+' (oto)';
+  else el.placeholder='';
+}
 function levhaEkleAdmin(){
   const en=parseFloat(document.getElementById('naEn').value)||0;
   const boy=parseFloat(document.getElementById('naBoy').value)||0;
   const kal=parseFloat(document.getElementById('naKal').value)||0;
-  const kg=parseFloat(document.getElementById('naKg').value)||null;
+  const kgGirilen=parseFloat(document.getElementById('naKg').value)||null;
   const kgEur=parseFloat(document.getElementById('naKgE').value)||null;
   const dogru=parseFloat(document.getElementById('naDogru').value)||0;
   if(!en||!boy||!kal){alert('En, boy, kalınlık zorunlu.');return;}
+  const kg=kgGirilen||kgHesapla(en,boy,kal);
   const d=gL();
   d.push({en,boy,kalinlik:kal,kg,kgEur,topEur:(kg&&kgEur)?kg*kgEur:null,dograEur:dogru});
   sL(d);aLevhaDoldur();levhaListeRender();
   ['naEn','naBoy','naKal','naKg','naKgE','naDogru'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('naKg').placeholder='';
 }
 
 function aLazerDoldur(){
@@ -1157,26 +1182,4 @@ function aLazerDoldur(){
     <tr>
       <td><b style="color:var(--accent2);">${l.tip}</b></td>
       <td><input type="number" value="${l.cap}" onchange="aLazerG(${i},'cap',this.value)" style="width:60px;"/></td>
-      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLazerG(${i},'kalinlik',this.value)" style="width:55px;"/></td>
-      <td><input type="number" value="${l.dis}" onchange="aLazerG(${i},'dis',this.value)" style="width:55px;"/></td>
-      <td><input type="number" value="${l.fiyat}" step="0.01" onchange="aLazerG(${i},'fiyat',this.value)" style="width:65px;"/></td>
-      <td><button class="del-btn" onclick="aLazerSil(${i})">Sil</button></td>
-    </tr>
-  `).join('');
-}
-function aLazerG(i,k,v){const d=gLz();d[i][k]=parseFloat(v)||0;sLz(d);}
-function aLazerSil(i){if(!confirm('Silinsin mi?'))return;const d=gLz();d.splice(i,1);sLz(d);aLazerDoldur();}
-function lazerEkleAdmin(){
-  const tip=document.getElementById('nlTip').value;
-  const cap=parseFloat(document.getElementById('nlCap').value)||0;
-  const kal=parseFloat(document.getElementById('nlKal').value)||0;
-  const dis=parseFloat(document.getElementById('nlDis').value)||0;
-  const fiyat=parseFloat(document.getElementById('nlFiyat').value)||0;
-  if(!cap||!kal||!dis||!fiyat){alert('Tüm alanlar zorunlu.');return;}
-  const d=gLz();d.push({tip,cap,kalinlik:kal,dis,fiyat});
-  sLz(d);aLazerDoldur();
-  ['nlCap','nlKal','nlDis','nlFiyat'].forEach(id=>document.getElementById(id).value='');
-}
-</script>
-</body>
-</html>
+      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLazerG(${i},'kalinlik',this.value)" style="width:55px;
