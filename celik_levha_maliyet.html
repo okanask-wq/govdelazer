@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Çelik Levha Maliyet Hesaplama</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-dark: #1e40af;
+      --accent: #f59e0b;
+      --accent-light: #fffbeb;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      min-height: 100vh;
+      padding: 24px 16px;
+      color: var(--gray-800);
+    }
+
+    .page-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      color: white;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+    .header-icon {
+      width: 60px; height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .header p { font-size: 13px; opacity: 0.8; }
+
+    /* ── CARD ── */
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header .badge {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .badge-blue  { background: var(--primary-light); }
+    .badge-amber { background: var(--accent-light); }
+    .badge-green { background: var(--success-light); }
+    .badge-purple{ background: #f3e8ff; }
+
+    .card-header h2 {
+      font-size: 15px; font-weight: 600;
+      color: var(--gray-700);
+    }
+    .card-body { padding: 20px 24px; }
+
+    /* ── GRID ── */
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    @media(max-width:640px) {
+      .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:400px) {
+      .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .field label {
+      display: block;
+      font-size: 12px; font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .field label .unit {
+      font-weight: 400;
+      text-transform: none;
+      color: var(--gray-400);
+      font-size: 11px;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap .prefix {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--gray-400); font-size: 13px; pointer-events: none;
+    }
+    .input-wrap input, .input-wrap select {
+      padding-left: 28px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      background: white;
+    }
+    input[readonly] {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 600;
+      cursor: default;
+    }
+    input.calc-result {
+      background: var(--success-light);
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    /* ── SEPARATOR ── */
+    .sep {
+      height: 1px;
+      background: var(--gray-100);
+      margin: 18px 0;
+    }
+
+    /* ── KALEM ROWS ── */
+    .kalem-row {
+      display: grid;
+      grid-template-columns: 1fr 160px 44px;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 10px;
+      animation: slideIn .2s ease;
+    }
+    @keyframes slideIn {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .kalem-row .remove-btn {
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      color: var(--danger);
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .kalem-row .remove-btn:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+    }
+
+    .add-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px;
+      border: 1.5px dashed var(--primary);
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .add-btn:hover {
+      background: #dbeafe;
+      border-color: var(--primary-dark);
+    }
+
+    /* ── KDV ── */
+    .kdv-row {
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .kdv-row label { font-size: 13px; font-weight: 500; color: var(--gray-700); cursor: pointer; }
+    .kdv-toggle {
+      display: flex; gap: 6px;
+    }
+    .kdv-toggle label {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all .15s;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+    .kdv-toggle input[type=radio] { display: none; }
+    .kdv-toggle input[type=radio]:checked + label {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* ── SUMMARY ── */
+    .summary-box {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 2px solid #86efac;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .summary-line {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px dashed #bbf7d0;
+    }
+    .summary-line:last-child { border-bottom: none; }
+    .summary-line .label { color: var(--gray-600); }
+    .summary-line .value { font-weight: 600; color: var(--gray-800); }
+    .summary-line.total {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 2px solid #86efac;
+      border-bottom: none;
+    }
+    .summary-line.total .label { font-size: 16px; font-weight: 700; color: #065f46; }
+    .summary-line.total .value { font-size: 22px; font-weight: 800; color: #065f46; }
+    .summary-line.kdv-line .value { color: var(--primary-dark); }
+
+    /* ── ACTIONS ── */
+    .actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-outline {
+      background: white;
+      color: var(--gray-700);
+      border: 1.5px solid var(--gray-300);
+    }
+    .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+    .btn-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1.5px solid #fca5a5;
+    }
+    .btn-danger:hover { background: #fee2e2; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+      .card { box-shadow: none; border: 1px solid var(--gray-200); }
+      .header { background: #1e40af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    /* ── TAGS ── */
+    .tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    /* ── INFO TOOLTIP ── */
+    .info { color: var(--gray-400); font-size: 12px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">⚙️</div>
+    <div>
+      <h1>Çelik Levha Maliyet Hesaplama</h1>
+      <p>Testere Gövdesi — Malzeme & İşlem Maliyet Formu</p>
+    </div>
+  </div>
+
+  <!-- 1. PROJEBİLGİLERİ -->
+  <div class="card no-print" style="border-top:3px solid var(--primary);">
+    <div class="card-header">
+      <div class="badge badge-blue">📋</div>
+      <h2>Proje / Müşteri Bilgileri</h2>
+    </div>
+    <div class="card-body">
+      <div class="grid grid-3">
+        <div class="field">
+          <label>Proje / İş Adı</label>
+          <input type="text" id="projeAdi" placeholder="Örn: Testere Gövdesi #001" />
+        </div>
+        <div class="field">
+          <label>Müşteri Adı</label>
+          <input type="text" id="musteriAdi" placeholder="Müşteri adı..." />
+        </div>
+        <div class="field">
+          <label>Tarih</label>
+          <input type="date" id="tarih" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ÇELİK LEVHA -->
+  <div class="card" style="border-top:3px solid #7c3aed;">
+    <div class="card-header">
+      <div class="badge badge-purple">🔩</div>
+      <h2>Çelik Levha Bilgileri</h2>
+    </div>
+    <div class="card-body">
+
+      <div class="grid grid-4">
+        <div class="field">
+          <label>En <span class="unit">(mm)</span></label>
+          <input type="number" id="levhaEn" placeholder="0" min="0" oninput="hesapla()" />
+        </div>
+        <div class="field">
+          <label>Boy <span class="unit">(mm)</span></label>
+          <input type="number" id="levhaBoy" placeholder="0" min="0" oninput="hesapla()" />
+        </div>
+        <div class="field">
+          <label>Kalınlık <span class="unit">(mm)</span></label>
+          <input type="number" id="levhaKalinlik" placeholder="0" min="0" step="0.1" oninput="hesapla()" />
+        </div>
+        <div class="field">
+          <label>Adet</label>
+          <input type="number" id="levhaAdet" placeholder="1" min="1" value="1" oninput="hesapla()" />
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="grid grid-3">
+        <div class="field">
+          <label>Ağırlık <span class="unit">(kg/adet) — Manuel</span></label>
+          <input type="number" id="levhaKg" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
+          <p class="info">Toplam ağırlık otomatik hesaplanır</p>
+        </div>
+        <div class="field">
+          <label>Toplam Ağırlık <span class="unit">(kg)</span></label>
+          <input type="text" id="toplamKg" readonly placeholder="0.00 kg" />
+        </div>
+        <div class="field">
+          <label>Birim Fiyat <span class="unit">(₺/kg)</span></label>
+          <div class="input-wrap">
+            <span class="prefix">₺</span>
+            <input type="number" id="kgFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Malzeme Maliyeti <span class="unit">(hesaplanan)</span></label>
+          <div class="input-wrap">
+            <span class="prefix">₺</span>
+            <input type="text" id="malzemeMaliyet" class="calc-result" readonly placeholder="0,00" />
+          </div>
+        </div>
+        <div class="field">
+          <label>veya Sabit Malzeme Fiyatı <span class="unit">(manuel girişi geçersiz kılar)</span></label>
+          <div class="input-wrap">
+            <span class="prefix">₺</span>
+            <input type="number" id="sabitMalzeme" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. İŞLEM KALEMLERİ -->
+  <div class="card" style="border-top:3px solid var(--accent);">
+    <div class="card-header">
+      <div class="badge badge-amber">⚒️</div>
+      <h2>İşlem Kalemleri</h2>
+    </div>
+    <div class="card-body">
+
+      <!-- Sabit kalemler -->
+      <div style="margin-bottom:12px;">
+        <p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;">
+          Sabit Kalemler
+        </p>
+
+        <div class="kalem-row" style="grid-template-columns:1fr 160px;">
+          <div class="field">
+            <label>Testere Gövdesi — Levha Düzleme</label>
+            <input type="text" value="Levha Düzleme" readonly style="background:var(--gray-50);color:var(--gray-600);" />
+          </div>
+          <div class="field">
+            <label>Fiyat <span class="unit">(₺)</span></label>
+            <div class="input-wrap">
+              <span class="prefix">₺</span>
+              <input type="number" id="duzlemeFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="kalem-row" style="grid-template-columns:1fr 160px;">
+          <div class="field">
+            <label>Testere Gövdesi — Lazer Kesim</label>
+            <input type="text" value="Lazer Kesim" readonly style="background:var(--gray-50);color:var(--gray-600);" />
+          </div>
+          <div class="field">
+            <label>Fiyat <span class="unit">(₺)</span></label>
+            <div class="input-wrap">
+              <span class="prefix">₺</span>
+              <input type="number" id="lazerkesimFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- Dinamik kalemler -->
+      <p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;">
+        Ek Kalemler
+      </p>
+      <div id="ekKalemlerContainer"></div>
+      <button class="add-btn no-print" onclick="kalemEkle()">＋ Kalem Ekle</button>
+
+    </div>
+  </div>
+
+  <!-- 4. DİĞER GİDERLER -->
+  <div class="card" style="border-top:3px solid var(--success);">
+    <div class="card-header">
+      <div class="badge badge-green">💼</div>
+      <h2>Diğer Giderler</h2>
+    </div>
+    <div class="card-body">
+      <div id="digerGiderlerContainer"></div>
+      <button class="add-btn no-print" onclick="giderEkle()">＋ Gider Ekle</button>
+    </div>
+  </div>
+
+  <!-- 5. KDV + ÖZET -->
+  <div class="card" style="border-top:3px solid var(--success);">
+    <div class="card-header">
+      <div class="badge badge-green">📊</div>
+      <h2>Maliyet Özeti</h2>
+    </div>
+    <div class="card-body">
+
+      <!-- KDV -->
+      <div class="kdv-row" style="margin-bottom:20px;">
+        <span style="font-size:13px;font-weight:600;color:var(--gray-700);">KDV:</span>
+        <div class="kdv-toggle">
+          <input type="radio" name="kdv" id="kdvYok" value="0" checked onchange="hesapla()" />
+          <label for="kdvYok">KDV Yok</label>
+          <input type="radio" name="kdv" id="kdv10" value="10" onchange="hesapla()" />
+          <label for="kdv10">%10</label>
+          <input type="radio" name="kdv" id="kdv20" value="20" onchange="hesapla()" />
+          <label for="kdv20">%20</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+          <span style="font-size:13px;font-weight:600;color:var(--gray-700);">Kâr Marjı (%):</span>
+          <input type="number" id="karMarji" placeholder="0" min="0" max="100" step="0.5"
+                 style="width:80px;" oninput="hesapla()" />
+        </div>
+      </div>
+
+      <!-- Özet Tablo -->
+      <div class="summary-box">
+        <div class="summary-line">
+          <span class="label">🔩 Malzeme Maliyeti</span>
+          <span class="value" id="sum_malzeme">₺0,00</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">⚒️ Düzleme</span>
+          <span class="value" id="sum_duzleme">₺0,00</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">✂️ Lazer Kesim</span>
+          <span class="value" id="sum_lazer">₺0,00</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">➕ Ek Kalemler</span>
+          <span class="value" id="sum_ekkalem">₺0,00</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">💼 Diğer Giderler</span>
+          <span class="value" id="sum_diger">₺0,00</span>
+        </div>
+        <div class="summary-line">
+          <span class="label" style="font-weight:600;">Ara Toplam</span>
+          <span class="value" id="sum_ara" style="color:var(--primary-dark);">₺0,00</span>
+        </div>
+        <div class="summary-line" id="karRow" style="display:none;">
+          <span class="label">📈 Kâr Marjı</span>
+          <span class="value" id="sum_kar" style="color:var(--accent);">₺0,00</span>
+        </div>
+        <div class="summary-line kdv-line" id="kdvRow" style="display:none;">
+          <span class="label" id="kdvLabel">KDV (%20)</span>
+          <span class="value" id="sum_kdv">₺0,00</span>
+        </div>
+        <div class="summary-line total">
+          <span class="label">💰 GENEL TOPLAM</span>
+          <span class="value" id="sum_toplam">₺0,00</span>
+        </div>
+      </div>
+
+      <!-- Notlar -->
+      <div style="margin-top:16px;">
+        <div class="field">
+          <label>Notlar / Açıklama</label>
+          <textarea id="notlar" rows="3" placeholder="Bu hesaplama ile ilgili notlar..."></textarea>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions no-print">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Yazdır / PDF</button>
+    <button class="btn btn-outline" onclick="formuTemizle()">🗑️ Formu Temizle</button>
+  </div>
+
+  <div style="text-align:center;color:var(--gray-400);font-size:11px;margin-top:24px;padding-bottom:8px;" class="no-print">
+    Çelik Levha Maliyet Hesaplama • Tüm hesaplamalar tarayıcıda yapılmaktadır
+  </div>
+
+</div>
+
+<script>
+  /* ─── YARDIMCI ─── */
+  const $ = id => document.getElementById(id);
+  const num = id => parseFloat($(id)?.value) || 0;
+  const fmt = v => v.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  /* ─── BUGÜNÜN TARİHİ ─── */
+  window.onload = () => {
+    const t = $('tarih');
+    if (t) t.value = new Date().toISOString().split('T')[0];
+    // İlk başlangıç kalemleri
+    giderEkle('Nakliye', '');
+    giderEkle('İşçilik', '');
+  };
+
+  /* ─── KALEM/GİDER EKLEME ─── */
+  let kalemIndex = 0;
+  function kalemEkle(ad='', fiyat='') {
+    kalemIndex++;
+    const div = document.createElement('div');
+    div.className = 'kalem-row';
+    div.id = 'kalem_' + kalemIndex;
+    div.innerHTML = `
+      <div class="field">
+        <label>Kalem Adı</label>
+        <input type="text" placeholder="Örn: Yüzey İşlemi, Kaynak..." value="${ad}" />
+      </div>
+      <div class="field">
+        <label>Fiyat (₺)</label>
+        <div class="input-wrap">
+          <span class="prefix">₺</span>
+          <input type="number" class="ekKalemFiyat" placeholder="0.00" min="0" step="0.01" value="${fiyat}" oninput="hesapla()" />
+        </div>
+      </div>
+      <button class="remove-btn" onclick="kalemSil('kalem_${kalemIndex}')">✕</button>
+    `;
+    $('ekKalemlerContainer').appendChild(div);
+  }
+  function kalemSil(id) {
+    document.getElementById(id)?.remove();
+    hesapla();
+  }
+
+  let giderIndex = 0;
+  function giderEkle(ad='', fiyat='') {
+    giderIndex++;
+    const div = document.createElement('div');
+    div.className = 'kalem-row';
+    div.id = 'gider_' + giderIndex;
+    div.innerHTML = `
+      <div class="field">
+        <label>Gider Adı</label>
+        <input type="text" placeholder="Örn: Nakliye, Sigorta..." value="${ad}" />
+      </div>
+      <div class="field">
+        <label>Tutar (₺)</label>
+        <div class="input-wrap">
+          <span class="prefix">₺</span>
+          <input type="number" class="giderFiyat" placeholder="0.00" min="0" step="0.01" value="${fiyat}" oninput="hesapla()" />
+        </div>
+      </div>
+      <button class="remove-btn" onclick="giderSil('gider_${giderIndex}')">✕</button>
+    `;
+    $('digerGiderlerContainer').appendChild(div);
+  }
+  function giderSil(id) {
+    document.getElementById(id)?.remove();
+    hesapla();
+  }
+
+  /* ─── ANA HESAPLAMA ─── */
+  function hesapla() {
+    // Malzeme
+    const adet = Math.max(1, num('levhaAdet'));
+    const kg   = num('levhaKg');
+    const toplamKgVal = kg * adet;
+    $('toplamKg').value = toplamKgVal > 0 ? toplamKgVal.toFixed(2) + ' kg' : '';
+
+    let malzeme;
+    const sabit = num('sabitMalzeme');
+    if (sabit > 0) {
+      malzeme = sabit;
+    } else {
+      malzeme = toplamKgVal * num('kgFiyat');
+    }
+    $('malzemeMaliyet').value = malzeme > 0 ? fmt(malzeme) : '';
+
+    // Sabit işlem
+    const duzleme   = num('duzlemeFiyat');
+    const lazer     = num('lazerkesimFiyat');
+
+    // Ek kalemler
+    let ekToplam = 0;
+    document.querySelectorAll('.ekKalemFiyat').forEach(el => {
+      ekToplam += parseFloat(el.value) || 0;
+    });
+
+    // Diğer giderler
+    let digerToplam = 0;
+    document.querySelectorAll('.giderFiyat').forEach(el => {
+      digerToplam += parseFloat(el.value) || 0;
+    });
+
+    const ara = malzeme + duzleme + lazer + ekToplam + digerToplam;
+
+    // Kâr marjı
+    const karPct = num('karMarji');
+    const kar    = ara * (karPct / 100);
+
+    // KDV
+    const kdvPct = parseInt(document.querySelector('input[name=kdv]:checked')?.value || '0');
+    const base   = ara + kar;
+    const kdv    = base * (kdvPct / 100);
+    const toplam = base + kdv;
+
+    // Özet güncelle
+    $('sum_malzeme').textContent = '₺' + fmt(malzeme);
+    $('sum_duzleme').textContent = '₺' + fmt(duzleme);
+    $('sum_lazer').textContent   = '₺' + fmt(lazer);
+    $('sum_ekkalem').textContent = '₺' + fmt(ekToplam);
+    $('sum_diger').textContent   = '₺' + fmt(digerToplam);
+    $('sum_ara').textContent     = '₺' + fmt(ara);
+    $('sum_toplam').textContent  = '₺' + fmt(toplam);
+
+    const karRow = $('karRow');
+    if (karPct > 0) {
+      karRow.style.display = 'flex';
+      $('sum_kar').textContent = '₺' + fmt(kar) + ' (%' + karPct + ')';
+    } else {
+      karRow.style.display = 'none';
+    }
+
+    const kdvRow = $('kdvRow');
+    if (kdvPct > 0) {
+      kdvRow.style.display = 'flex';
+      $('kdvLabel').textContent = 'KDV (%' + kdvPct + ')';
+      $('sum_kdv').textContent  = '₺' + fmt(kdv);
+    } else {
+      kdvRow.style.display = 'none';
+    }
+  }
+
+  /* ─── FORM TEMİZLE ─── */
+  function formuTemizle() {
+    if (!confirm('Tüm alanlar temizlensin mi?')) return;
+    document.querySelectorAll('input[type=number], input[type=text]')
+      .forEach(el => { if (!el.readOnly) el.value = ''; });
+    $('notlar').value = '';
+    $('levhaAdet').value = 1;
+    document.getElementById('kdvYok').checked = true;
+    $('ekKalemlerContainer').innerHTML = '';
+    $('digerGiderlerContainer').innerHTML = '';
+    giderEkle('Nakliye', '');
+    giderEkle('İşçilik', '');
+    hesapla();
+  }
+</script>
+</body>
+</html>
