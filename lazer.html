@@ -1182,4 +1182,26 @@ function aLazerDoldur(){
     <tr>
       <td><b style="color:var(--accent2);">${l.tip}</b></td>
       <td><input type="number" value="${l.cap}" onchange="aLazerG(${i},'cap',this.value)" style="width:60px;"/></td>
-      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLazerG(${i},'kalinlik',this.value)" style="width:55px;
+      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLazerG(${i},'kalinlik',this.value)" style="width:55px;"/></td>
+      <td><input type="number" value="${l.dis}" onchange="aLazerG(${i},'dis',this.value)" style="width:55px;"/></td>
+      <td><input type="number" value="${l.fiyat}" step="0.01" onchange="aLazerG(${i},'fiyat',this.value)" style="width:65px;"/></td>
+      <td><button class="del-btn" onclick="aLazerSil(${i})">Sil</button></td>
+    </tr>
+  `).join('');
+}
+function aLazerG(i,k,v){const d=gLz();d[i][k]=parseFloat(v)||0;sLz(d);}
+function aLazerSil(i){if(!confirm('Silinsin mi?'))return;const d=gLz();d.splice(i,1);sLz(d);aLazerDoldur();}
+function lazerEkleAdmin(){
+  const tip=document.getElementById('nlTip').value;
+  const cap=parseFloat(document.getElementById('nlCap').value)||0;
+  const kal=parseFloat(document.getElementById('nlKal').value)||0;
+  const dis=parseFloat(document.getElementById('nlDis').value)||0;
+  const fiyat=parseFloat(document.getElementById('nlFiyat').value)||0;
+  if(!cap||!kal||!dis||!fiyat){alert('Tüm alanlar zorunlu.');return;}
+  const d=gLz();d.push({tip,cap,kalinlik:kal,dis,fiyat});
+  sLz(d);aLazerDoldur();
+  ['nlCap','nlKal','nlDis','nlFiyat'].forEach(id=>document.getElementById(id).value='');
+}
+</script>
+</body>
+</html>
