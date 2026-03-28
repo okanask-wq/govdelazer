@@ -1,746 +1,1140 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Çelik Levha Maliyet Hesaplama</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-light: #eff6ff;
-      --primary-dark: #1e40af;
-      --accent: #f59e0b;
-      --accent-light: #fffbeb;
-      --success: #10b981;
-      --success-light: #ecfdf5;
-      --danger: #ef4444;
-      --danger-light: #fef2f2;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --radius: 12px;
-      --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
-      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Testere Gövdesi Maliyet Hesaplama</title>
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d2e;--surface2:#222539;--surface3:#2a2e47;
+  --border:#2f3355;--border2:#3d4270;
+  --accent:#6366f1;--accent2:#818cf8;--accent-glow:rgba(99,102,241,0.18);
+  --green:#10b981;--amber:#f59e0b;--red:#ef4444;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --radius:12px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap{max-width:920px;margin:0 auto;}
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-      min-height: 100vh;
-      padding: 24px 16px;
-      color: var(--gray-800);
-    }
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#1e1b4b,#312e81,#1e1b4b);
+  border:1px solid var(--border2);border-radius:var(--radius);
+  padding:22px 28px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;position:relative;overflow:hidden;
+}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(99,102,241,0.15),transparent 70%);pointer-events:none;}
+.hl{display:flex;align-items:center;gap:14px;}
+.hicon{width:44px;height:44px;background:var(--accent-glow);border:1px solid var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.header h1{font-size:17px;font-weight:700;color:#e0e7ff;}
+.header p{font-size:12px;color:#a5b4fc;margin-top:1px;}
+.admin-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(99,102,241,0.1);border:1px solid var(--accent);border-radius:var(--radius-sm);color:var(--accent2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;z-index:1;}
+.admin-btn:hover{background:rgba(99,102,241,0.2);}
 
-    .page-wrapper {
-      max-width: 860px;
-      margin: 0 auto;
-    }
+/* ── KUR ── */
+.kur-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;margin-bottom:14px;flex-wrap:wrap;}
+.kur-bar-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+.kf{display:flex;align-items:center;gap:6px;}
+.kf label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;margin:0;}
+.kf .kr{display:flex;align-items:center;gap:5px;}
+.kf input{width:90px;padding:5px 8px;background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-weight:600;outline:none;transition:border-color .15s;}
+.kf input:focus{border-color:var(--accent);}
+.kbadge{padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.kbadge.stale{background:rgba(245,158,11,0.15);color:var(--amber);border-color:rgba(245,158,11,0.3);}
+.kur-btn{padding:5px 12px;background:var(--accent);border:none;border-radius:6px;color:white;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s;margin-left:auto;}
+.kur-btn:hover{background:#4f46e5;}
+.kur-btn:disabled{opacity:.5;cursor:not-allowed;}
+.kur-sep{width:1px;height:18px;background:var(--border);margin:0 4px;}
 
-    /* ── HEADER ── */
-    .header {
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      color: white;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      box-shadow: var(--shadow-lg);
-    }
-    .header-icon {
-      width: 60px; height: 60px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-      flex-shrink: 0;
-    }
-    .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .header p { font-size: 13px; opacity: 0.8; }
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:visible;}
+.card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.cnum{width:26px;height:26px;border-radius:6px;background:var(--accent-glow);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent2);flex-shrink:0;}
+.card-head h2{font-size:14px;font-weight:600;}
+.card-head small{margin-left:auto;font-size:11px;color:var(--text3);}
+.card-body{padding:18px 20px;}
 
-    /* ── CARD ── */
-    .card {
-      background: white;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .card-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--gray-100);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .card-header .badge {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px;
-      flex-shrink: 0;
-    }
-    .badge-blue  { background: var(--primary-light); }
-    .badge-amber { background: var(--accent-light); }
-    .badge-green { background: var(--success-light); }
-    .badge-purple{ background: #f3e8ff; }
+/* ── FORM ── */
+.field label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px;}
+.field label span{font-weight:400;text-transform:none;}
+input,select,textarea{width:100%;padding:9px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;outline:none;transition:border-color .15s;}
+input:focus,select:focus{border-color:var(--accent);}
+input[readonly]{background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;}
+select option{background:#1a1d2e;}
+.grid{display:grid;gap:14px;}
+.g2{grid-template-columns:1fr 1fr;}
+.g3{grid-template-columns:1fr 1fr 1fr;}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr;}
+@media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr 1fr;}}
 
-    .card-header h2 {
-      font-size: 15px; font-weight: 600;
-      color: var(--gray-700);
-    }
-    .card-body { padding: 20px 24px; }
+/* ── TABS ── */
+.ltabs{display:flex;gap:6px;margin-bottom:16px;}
+.ltab{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);color:var(--text2);background:transparent;transition:all .15s;}
+.ltab.active{background:var(--accent);border-color:var(--accent);color:white;}
 
-    /* ── GRID ── */
-    .grid { display: grid; gap: 16px; }
-    .grid-2 { grid-template-columns: 1fr 1fr; }
-    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-    .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-    @media(max-width:640px) {
-      .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr 1fr; }
-    }
-    @media(max-width:400px) {
-      .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; }
-    }
+/* ── LEVHA LİSTESİ ── */
+.levha-grid{display:grid;gap:8px;}
+.levha-item{
+  display:grid;grid-template-columns:24px 1fr auto;gap:12px;align-items:center;
+  padding:12px 14px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;
+}
+.levha-item:hover{border-color:var(--border2);background:var(--surface3);}
+.levha-item.selected{border-color:var(--accent);background:rgba(99,102,241,0.08);}
+.lradio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .15s;}
+.levha-item.selected .lradio{border-color:var(--accent);}
+.levha-item.selected .lradio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);display:block;}
+.li-info .title{font-size:13px;font-weight:600;}
+.li-info .sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.li-price{text-align:right;}
+.li-price .big{font-size:14px;font-weight:700;color:var(--green);}
+.li-price .sm{font-size:11px;color:var(--text3);}
+.kal-chip{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;background:var(--accent-glow);color:var(--accent2);border:1px solid var(--border2);margin-left:6px;}
+.degistir-btn{padding:4px 12px;background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;margin-left:10px;flex-shrink:0;transition:all .15s;}
+.degistir-btn:hover{border-color:var(--accent);color:var(--accent2);background:var(--accent-glow);}
 
-    /* ── FORM ELEMENTS ── */
-    .field label {
-      display: block;
-      font-size: 12px; font-weight: 600;
-      color: var(--gray-600);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-    .field label .unit {
-      font-weight: 400;
-      text-transform: none;
-      color: var(--gray-400);
-      font-size: 11px;
-    }
-    .input-wrap {
-      position: relative;
-    }
-    .input-wrap .prefix {
-      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      color: var(--gray-400); font-size: 13px; pointer-events: none;
-    }
-    .input-wrap input, .input-wrap select {
-      padding-left: 28px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 14px;
-      color: var(--gray-800);
-      background: var(--gray-50);
-      transition: border-color .15s, box-shadow .15s;
-      outline: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-      background: white;
-    }
-    input[readonly] {
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      font-weight: 600;
-      cursor: default;
-    }
-    input.calc-result {
-      background: var(--success-light);
-      color: #065f46;
-      font-weight: 700;
-    }
+/* ── TESTERE SATIRLARI ── */
+.t-rows{display:grid;gap:10px;}
+.t-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;position:relative;}
+.t-row-grid{display:grid;grid-template-columns:180px 90px 90px 90px 1fr 36px;gap:10px;align-items:end;}
+@media(max-width:720px){.t-row-grid{grid-template-columns:1fr 1fr 1fr;}}
 
-    /* ── SEPARATOR ── */
-    .sep {
-      height: 1px;
-      background: var(--gray-100);
-      margin: 18px 0;
-    }
+/* Cap arama dropdown */
+.cap-wrap{position:relative;}
+.cap-dropdown{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:50;
+  background:var(--surface3);border:1.5px solid var(--accent);border-radius:var(--radius-sm);
+  max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  display:none;
+}
+.cap-dropdown.open{display:block;}
+.cap-opt{
+  padding:9px 12px;cursor:pointer;font-size:13px;
+  border-bottom:1px solid var(--border);transition:background .1s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cap-opt:last-child{border-bottom:none;}
+.cap-opt:hover,.cap-opt.focused{background:rgba(99,102,241,0.15);}
+.cap-opt .co-left{display:flex;flex-direction:column;gap:2px;}
+.cap-opt .co-title{font-weight:600;color:var(--text);}
+.cap-opt .co-sub{font-size:11px;color:var(--text3);}
+.cap-opt .co-price{font-weight:700;color:var(--amber);font-size:13px;}
+.cap-opt.manual-opt{color:var(--text2);font-style:italic;}
 
-    /* ── KALEM ROWS ── */
-    .kalem-row {
-      display: grid;
-      grid-template-columns: 1fr 160px 44px;
-      gap: 10px;
-      align-items: end;
-      margin-bottom: 10px;
-      animation: slideIn .2s ease;
-    }
-    @keyframes slideIn {
-      from { opacity:0; transform:translateY(-6px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-    .kalem-row .remove-btn {
-      width: 40px; height: 40px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 8px;
-      background: white;
-      cursor: pointer;
-      color: var(--danger);
-      font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .15s;
-    }
-    .kalem-row .remove-btn:hover {
-      background: var(--danger-light);
-      border-color: var(--danger);
-    }
+.remove-row{width:34px;height:34px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--red);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.remove-row:hover{background:rgba(239,68,68,0.1);border-color:var(--red);}
+.add-row-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:transparent;border:1.5px dashed var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:6px;}
+.add-row-btn:hover{border-color:var(--accent);color:var(--accent2);}
 
-    .add-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 9px 16px;
-      border: 1.5px dashed var(--primary);
-      border-radius: 8px;
-      background: var(--primary-light);
-      color: var(--primary);
-      font-size: 13px; font-weight: 600;
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .add-btn:hover {
-      background: #dbeafe;
-      border-color: var(--primary-dark);
-    }
+/* ── HESAPLA ── */
+.hesapla-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#4f46e5);border:none;border-radius:var(--radius-sm);color:white;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+.hesapla-btn:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(99,102,241,0.3);}
 
-    /* ── KDV ── */
-    .kdv-row {
-      display: flex; align-items: center; gap: 12px;
-      flex-wrap: wrap;
-    }
-    .kdv-row label { font-size: 13px; font-weight: 500; color: var(--gray-700); cursor: pointer; }
-    .kdv-toggle {
-      display: flex; gap: 6px;
-    }
-    .kdv-toggle label {
-      display: flex; align-items: center; gap: 5px;
-      padding: 6px 14px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all .15s;
-      font-weight: 600;
-      color: var(--gray-600);
-    }
-    .kdv-toggle input[type=radio] { display: none; }
-    .kdv-toggle input[type=radio]:checked + label {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
+/* ── SONUÇ ── */
+.result-box{background:linear-gradient(135deg,rgba(16,185,129,0.07),rgba(99,102,241,0.07));border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius);padding:20px;}
+.rlines{display:grid;gap:0;margin-bottom:14px;}
+.rline{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--border);}
+.rline:last-child{border-bottom:none;}
+.rl{color:var(--text2);}
+.rv{font-weight:600;}
+.result-items{display:grid;gap:10px;}
+.ri{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;}
+.ri-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.ri-title{font-size:14px;font-weight:700;color:var(--accent2);}
+.ri-total{font-size:22px;font-weight:800;color:var(--green);}
+.ri-bd{display:grid;gap:4px;}
+.ri-line{display:flex;justify-content:space-between;font-size:12px;}
+.ri-line .k{color:var(--text3);}
+.ri-line .v{color:var(--text2);font-weight:500;}
+.ri-sum{border-top:1px dashed var(--border);margin-top:4px;padding-top:6px;display:flex;justify-content:space-between;font-size:13px;}
+.ri-sum .k{font-weight:600;color:var(--text);}
+.ri-sum .v{color:var(--green);font-weight:700;}
+.sep{height:1px;background:var(--border);margin:14px 0;}
 
-    /* ── SUMMARY ── */
-    .summary-box {
-      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      border: 2px solid #86efac;
-      border-radius: var(--radius);
-      padding: 20px 24px;
-    }
-    .summary-line {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 0;
-      font-size: 14px;
-      border-bottom: 1px dashed #bbf7d0;
-    }
-    .summary-line:last-child { border-bottom: none; }
-    .summary-line .label { color: var(--gray-600); }
-    .summary-line .value { font-weight: 600; color: var(--gray-800); }
-    .summary-line.total {
-      margin-top: 8px;
-      padding-top: 12px;
-      border-top: 2px solid #86efac;
-      border-bottom: none;
-    }
-    .summary-line.total .label { font-size: 16px; font-weight: 700; color: #065f46; }
-    .summary-line.total .value { font-size: 22px; font-weight: 800; color: #065f46; }
-    .summary-line.kdv-line .value { color: var(--primary-dark); }
+/* ── UYARI ── */
+.alert{padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;display:flex;align-items:center;gap:8px;}
+.alert-warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--amber);}
+.alert-info{background:rgba(99,102,241,0.08);border:1px solid var(--border2);color:var(--accent2);}
 
-    /* ── ACTIONS ── */
-    .actions {
-      display: flex; gap: 12px; flex-wrap: wrap;
-      margin-top: 20px;
-    }
-    .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 14px; font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all .15s;
-      display: inline-flex; align-items: center; gap: 8px;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
-    .btn-outline {
-      background: white;
-      color: var(--gray-700);
-      border: 1.5px solid var(--gray-300);
-    }
-    .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
-    .btn-danger {
-      background: var(--danger-light);
-      color: var(--danger);
-      border: 1.5px solid #fca5a5;
-    }
-    .btn-danger:hover { background: #fee2e2; }
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:min(720px,95vw);max-height:90vh;overflow-y:auto;transform:translateY(10px);transition:transform .2s;}
+.modal-bg.open .modal{transform:translateY(0);}
+.modal-head{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1;}
+.modal-head h2{font-size:15px;font-weight:700;}
+.mclose{width:30px;height:30px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;}
+.mclose:hover{background:var(--surface2);}
+.modal-body{padding:20px 22px;}
+.atabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm);margin-bottom:14px;}
+.atab{flex:1;padding:8px;text-align:center;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text3);transition:all .15s;border:none;background:transparent;}
+.atab.active{background:var(--surface3);color:var(--text);}
 
-    /* ── PRINT ── */
-    @media print {
-      body { background: white; padding: 0; }
-      .no-print { display: none !important; }
-      .card { box-shadow: none; border: 1px solid var(--gray-200); }
-      .header { background: #1e40af !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    }
+/* ── ADMİN TABLE ── */
+.atable{width:100%;border-collapse:collapse;}
+.atable th{text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding:8px 8px;border-bottom:1px solid var(--border);}
+.atable td{padding:7px 8px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.atable tr:last-child td{border-bottom:none;}
+.atable tr:hover td{background:rgba(255,255,255,0.02);}
+.atable input{padding:5px 8px;font-size:13px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;width:100%;}
+.atable input:focus{border-color:var(--accent);}
+.del-btn{padding:3px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:5px;color:var(--red);font-size:11px;font-weight:600;cursor:pointer;}
+.del-btn:hover{background:rgba(239,68,68,0.2);}
+.add-form{display:flex;gap:8px;flex-wrap:wrap;align-items:end;padding:12px;background:var(--surface2);border:1px dashed var(--border2);border-radius:var(--radius-sm);margin-top:10px;}
+.add-form .f{flex:1;min-width:75px;}
+.add-form .f label{font-size:10px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;text-transform:uppercase;}
+.add-form .f input,.add-form .f select{padding:7px 8px;font-size:13px;}
+.save-btn{padding:9px 18px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:white;font-size:13px;font-weight:600;cursor:pointer;}
+.save-btn:hover{background:#4f46e5;}
 
-    /* ── TAGS ── */
-    .tag {
-      display: inline-block;
-      font-size: 11px; font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
+/* ── HIZLI SONUÇ ── */
+.hizli-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;
+}
+.hizli-head{
+  padding:12px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(99,102,241,0.06));
+}
+.hizli-head h3{font-size:14px;font-weight:700;color:var(--text);}
+.hizli-table{width:100%;border-collapse:collapse;}
+.hizli-table th{
+  font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;
+  padding:9px 16px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2);
+}
+.hizli-table th:not(:first-child){text-align:right;}
+.hizli-table td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.hizli-table tr:last-child td{border-bottom:none;}
+.hizli-table tr:hover td{background:rgba(255,255,255,0.015);}
+.hizli-table td:not(:first-child){text-align:right;}
+.ht-spec{font-weight:700;color:var(--accent2);font-size:14px;}
+.ht-adet{font-size:11px;color:var(--text3);margin-top:1px;}
+.ht-maliyet{font-size:18px;font-weight:800;color:var(--green);}
+.ht-maliyet span{font-size:11px;font-weight:400;color:var(--text3);}
+.ht-ugur{color:var(--text2);font-size:13px;}
+.ht-ugur-none{color:var(--text3);font-size:12px;font-style:italic;}
+.diff-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;
+}
+.diff-badge.cheaper{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.diff-badge.pricier{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.diff-badge.same{background:var(--surface3);color:var(--text3);border:1px solid var(--border);}
 
-    /* ── INFO TOOLTIP ── */
-    .info { color: var(--gray-400); font-size: 12px; margin-top: 4px; }
-  </style>
+/* ── UĞUR DETAY (in detailed section) ── */
+.ugur-box{
+  margin-top:10px;padding:9px 12px;
+  background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);
+  border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.ugur-box .ub-label{font-size:11px;color:var(--text3);}
+.ugur-box .ub-val{font-size:12px;font-weight:600;color:var(--amber);}
+.ugur-nodata{font-size:12px;color:var(--text3);font-style:italic;}
+
+/* ── LOCK ── */
+.lock{text-align:center;padding:36px 20px;}
+.lock-icon{font-size:38px;margin-bottom:10px;}
+.lock h3{font-size:16px;font-weight:700;margin-bottom:4px;}
+.lock p{font-size:13px;color:var(--text3);margin-bottom:18px;}
+.pin-in{width:130px;text-align:center;letter-spacing:6px;font-size:22px;font-weight:700;padding:11px;background:var(--surface2);border:2px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);margin:0 auto;display:block;}
+.pin-in:focus{border-color:var(--accent);}
+.pin-err{color:var(--red);font-size:12px;margin-top:8px;min-height:18px;}
+
+/* ── GİRİŞ EKRANI ── */
+#girisEkrani{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+}
+.giris-kutu{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--radius);padding:40px 48px;
+  text-align:center;width:min(380px,90vw);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+}
+.giris-logo{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  border-radius:16px;display:flex;align-items:center;
+  justify-content:center;font-size:28px;
+  margin:0 auto 20px;
+}
+.giris-kutu h2{font-size:20px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.giris-kutu p{font-size:13px;color:var(--text3);margin-bottom:28px;}
+.giris-pin{
+  width:160px;text-align:center;letter-spacing:8px;
+  font-size:26px;font-weight:700;padding:14px;
+  background:var(--surface2);border:2px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--text);
+  display:block;margin:0 auto 14px;outline:none;
+  transition:border-color .15s;
+}
+.giris-pin:focus{border-color:var(--accent);}
+.giris-btn{
+  width:100%;padding:13px;margin-top:4px;
+  background:linear-gradient(135deg,var(--accent),#4f46e5);
+  border:none;border-radius:var(--radius-sm);
+  color:white;font-size:15px;font-weight:700;cursor:pointer;
+  transition:opacity .15s;
+}
+.giris-btn:hover{opacity:.9;}
+.giris-err{color:var(--red);font-size:12px;margin-top:10px;min-height:16px;}
+</style>
 </head>
 <body>
-<div class="page-wrapper">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-icon">⚙️</div>
+<!-- GİRİŞ EKRANI -->
+<div id="girisEkrani">
+  <div class="giris-kutu">
+    <div class="giris-logo">⚙️</div>
+    <h2>Testere Maliyet</h2>
+    <p>Devam etmek için şifreyi girin</p>
+    <input class="giris-pin" type="password" id="girisPin" maxlength="6"
+           placeholder="••••"
+           onkeyup="if(event.key==='Enter') girisKontrol()"/>
+    <button class="giris-btn" onclick="girisKontrol()">Giriş →</button>
+    <div class="giris-err" id="girisErr"></div>
+  </div>
+</div>
+
+<div class="wrap" id="anaIcerik" style="display:none;">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hl">
+    <div class="hicon">⚙️</div>
     <div>
-      <h1>Çelik Levha Maliyet Hesaplama</h1>
-      <p>Testere Gövdesi — Malzeme & İşlem Maliyet Formu</p>
+      <h1>Testere Gövdesi Maliyet Hesaplama</h1>
+      <p>Levha · Doğrultma · Lazer Kesim → Birim Maliyet (€)</p>
     </div>
   </div>
+  <button class="admin-btn" onclick="adminAc()">🔐 Yönetim</button>
+</div>
 
-  <!-- 1. PROJEBİLGİLERİ -->
-  <div class="card no-print" style="border-top:3px solid var(--primary);">
-    <div class="card-header">
-      <div class="badge badge-blue">📋</div>
-      <h2>Proje / Müşteri Bilgileri</h2>
-    </div>
-    <div class="card-body">
-      <div class="grid grid-3">
-        <div class="field">
-          <label>Proje / İş Adı</label>
-          <input type="text" id="projeAdi" placeholder="Örn: Testere Gövdesi #001" />
-        </div>
-        <div class="field">
-          <label>Müşteri Adı</label>
-          <input type="text" id="musteriAdi" placeholder="Müşteri adı..." />
-        </div>
-        <div class="field">
-          <label>Tarih</label>
-          <input type="date" id="tarih" />
-        </div>
-      </div>
+<!-- KUR -->
+<div class="kur-bar">
+  <div class="kf">
+    <label>EUR/TRY</label>
+    <div class="kr">
+      <input type="number" id="eurKur" placeholder="0.00" step="0.01" min="0"/>
+      <span class="kbadge stale" id="kurBadge">Manuel</span>
     </div>
   </div>
-
-  <!-- 2. ÇELİK LEVHA -->
-  <div class="card" style="border-top:3px solid #7c3aed;">
-    <div class="card-header">
-      <div class="badge badge-purple">🔩</div>
-      <h2>Çelik Levha Bilgileri</h2>
-    </div>
-    <div class="card-body">
-
-      <div class="grid grid-4">
-        <div class="field">
-          <label>En <span class="unit">(mm)</span></label>
-          <input type="number" id="levhaEn" placeholder="0" min="0" oninput="hesapla()" />
-        </div>
-        <div class="field">
-          <label>Boy <span class="unit">(mm)</span></label>
-          <input type="number" id="levhaBoy" placeholder="0" min="0" oninput="hesapla()" />
-        </div>
-        <div class="field">
-          <label>Kalınlık <span class="unit">(mm)</span></label>
-          <input type="number" id="levhaKalinlik" placeholder="0" min="0" step="0.1" oninput="hesapla()" />
-        </div>
-        <div class="field">
-          <label>Adet</label>
-          <input type="number" id="levhaAdet" placeholder="1" min="1" value="1" oninput="hesapla()" />
-        </div>
-      </div>
-
-      <div class="sep"></div>
-
-      <div class="grid grid-3">
-        <div class="field">
-          <label>Ağırlık <span class="unit">(kg/adet) — Manuel</span></label>
-          <input type="number" id="levhaKg" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
-          <p class="info">Toplam ağırlık otomatik hesaplanır</p>
-        </div>
-        <div class="field">
-          <label>Toplam Ağırlık <span class="unit">(kg)</span></label>
-          <input type="text" id="toplamKg" readonly placeholder="0.00 kg" />
-        </div>
-        <div class="field">
-          <label>Birim Fiyat <span class="unit">(₺/kg)</span></label>
-          <div class="input-wrap">
-            <span class="prefix">₺</span>
-            <input type="number" id="kgFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
-          </div>
-        </div>
-      </div>
-
-      <div class="sep"></div>
-
-      <div class="grid grid-2">
-        <div class="field">
-          <label>Malzeme Maliyeti <span class="unit">(hesaplanan)</span></label>
-          <div class="input-wrap">
-            <span class="prefix">₺</span>
-            <input type="text" id="malzemeMaliyet" class="calc-result" readonly placeholder="0,00" />
-          </div>
-        </div>
-        <div class="field">
-          <label>veya Sabit Malzeme Fiyatı <span class="unit">(manuel girişi geçersiz kılar)</span></label>
-          <div class="input-wrap">
-            <span class="prefix">₺</span>
-            <input type="number" id="sabitMalzeme" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
-          </div>
-        </div>
-      </div>
-
+  <div class="kur-sep"></div>
+  <div class="kf">
+    <label>USD/TRY</label>
+    <div class="kr">
+      <input type="number" id="usdKur" placeholder="0.00" step="0.01" min="0"/>
     </div>
   </div>
+  <button class="kur-btn" id="kurBtn" onclick="kurCek()">🔄 Kuru Çek</button>
+</div>
 
-  <!-- 3. İŞLEM KALEMLERİ -->
-  <div class="card" style="border-top:3px solid var(--accent);">
-    <div class="card-header">
-      <div class="badge badge-amber">⚒️</div>
-      <h2>İşlem Kalemleri</h2>
+<!-- ADIM 1: LEVHA SEÇİMİ -->
+<div class="card">
+  <div class="card-head">
+    <div class="cnum">1</div>
+    <h2>Levha Seçimi</h2>
+    <small>Kullanılan levhayı seçin veya manuel girin</small>
+  </div>
+  <div class="card-body">
+    <div class="ltabs">
+      <button class="ltab active" id="ltab-liste" onclick="levhaTabi('liste')">📋 Listeden Seç</button>
+      <button class="ltab" id="ltab-manuel" onclick="levhaTabi('manuel')">✏️ Manuel Gir</button>
     </div>
-    <div class="card-body">
 
-      <!-- Sabit kalemler -->
-      <div style="margin-bottom:12px;">
-        <p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;">
-          Sabit Kalemler
-        </p>
+    <!-- Listeden -->
+    <div id="panel-liste">
+      <div class="levha-grid" id="levhaListeEl"></div>
+    </div>
 
-        <div class="kalem-row" style="grid-template-columns:1fr 160px;">
-          <div class="field">
-            <label>Testere Gövdesi — Levha Düzleme</label>
-            <input type="text" value="Levha Düzleme" readonly style="background:var(--gray-50);color:var(--gray-600);" />
-          </div>
-          <div class="field">
-            <label>Fiyat <span class="unit">(₺)</span></label>
-            <div class="input-wrap">
-              <span class="prefix">₺</span>
-              <input type="number" id="duzlemeFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
-            </div>
-          </div>
-        </div>
-
-        <div class="kalem-row" style="grid-template-columns:1fr 160px;">
-          <div class="field">
-            <label>Testere Gövdesi — Lazer Kesim</label>
-            <input type="text" value="Lazer Kesim" readonly style="background:var(--gray-50);color:var(--gray-600);" />
-          </div>
-          <div class="field">
-            <label>Fiyat <span class="unit">(₺)</span></label>
-            <div class="input-wrap">
-              <span class="prefix">₺</span>
-              <input type="number" id="lazerkesimFiyat" placeholder="0.00" min="0" step="0.01" oninput="hesapla()" />
-            </div>
-          </div>
-        </div>
+    <!-- Manuel -->
+    <div id="panel-manuel" style="display:none;">
+      <div class="grid g3">
+        <div class="field"><label>En <span>(mm)</span></label><input type="number" id="mEn" placeholder="620" min="0"/></div>
+        <div class="field"><label>Boy <span>(mm)</span></label><input type="number" id="mBoy" placeholder="2480" min="0"/></div>
+        <div class="field"><label>Kalınlık <span>(mm)</span></label><input type="number" id="mKal" placeholder="2.5" step="0.1" min="0"/></div>
+        <div class="field"><label>Ağırlık <span>(kg)</span></label><input type="number" id="mKg" placeholder="30.5" step="0.01" min="0"/></div>
+        <div class="field"><label>Kg Fiyatı <span>(€)</span></label><input type="number" id="mKgEur" placeholder="2.10" step="0.01" min="0"/></div>
+        <div class="field"><label>Doğrultma <span>(€)</span></label><input type="number" id="mDogru" placeholder="12.10" step="0.01" min="0"/></div>
       </div>
+    </div>
 
-      <div class="sep"></div>
-
-      <!-- Dinamik kalemler -->
-      <p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:12px;">
-        Ek Kalemler
+    <!-- Levha adedi — her iki modda da görünür -->
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div class="field" style="width:200px;">
+        <label>Kaç Levha Kullanıldı?</label>
+        <input type="number" id="levhaAdedi" placeholder="1" value="1" min="1" step="1"
+               style="font-size:18px;font-weight:700;text-align:center;"/>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:18px;">
+        Toplam levha + doğrultma maliyeti bu sayı ile çarpılarak hesaplanır.
       </p>
-      <div id="ekKalemlerContainer"></div>
-      <button class="add-btn no-print" onclick="kalemEkle()">＋ Kalem Ekle</button>
-
     </div>
   </div>
+</div>
 
-  <!-- 4. DİĞER GİDERLER -->
-  <div class="card" style="border-top:3px solid var(--success);">
-    <div class="card-header">
-      <div class="badge badge-green">💼</div>
-      <h2>Diğer Giderler</h2>
+<!-- ADIM 2: TESTERELER -->
+<div class="card">
+  <div class="card-head">
+    <div class="cnum">2</div>
+    <h2>Levhadan Kesilen Testereler</h2>
+    <small>Alan bazlı maliyet dağıtımı</small>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info" style="margin-bottom:14px;">
+      💡 Çap alanına numara yazın — eşleşen tüm testereler belirecek. Birden fazla tip ekleyebilirsiniz.
     </div>
+    <div class="t-rows" id="tRows"></div>
+    <button class="add-row-btn" onclick="testereEkle()">＋ Testere Ekle</button>
+  </div>
+</div>
+
+<!-- HESAPLA -->
+<button class="hesapla-btn" onclick="hesapla()" style="margin-bottom:16px;">Maliyeti Hesapla →</button>
+
+<!-- HIZLI SONUÇ -->
+<div id="hizliSonuc" style="display:none;margin-bottom:16px;"></div>
+
+<!-- DETAYLI SONUÇ (katlanabilir) -->
+<div id="sonucCard" class="card" style="display:none;">
+  <div class="card-head" onclick="detayToggle()" style="cursor:pointer;user-select:none;">
+    <div class="cnum" style="background:rgba(99,102,241,0.15);border-color:var(--accent);color:var(--accent2);">≡</div>
+    <h2>Detaylı Hesaplama</h2>
+    <small id="detayToggleLabel" style="cursor:pointer;color:var(--accent2);">▼ Göster</small>
+  </div>
+  <div id="detayIcerik" style="display:none;">
     <div class="card-body">
-      <div id="digerGiderlerContainer"></div>
-      <button class="add-btn no-print" onclick="giderEkle()">＋ Gider Ekle</button>
+      <div class="result-box">
+        <div class="rlines" id="rLines"></div>
+        <div class="sep"></div>
+        <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Testere Başına Döküm</p>
+        <div class="result-items" id="rItems"></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- 5. KDV + ÖZET -->
-  <div class="card" style="border-top:3px solid var(--success);">
-    <div class="card-header">
-      <div class="badge badge-green">📊</div>
-      <h2>Maliyet Özeti</h2>
+</div><!-- /anaIcerik wrap -->
+
+<!-- ════════════ ADMİN MODAL ════════════ -->
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🔐 Yönetim Paneli</h2>
+      <button class="mclose" onclick="adminKapat()">✕</button>
     </div>
-    <div class="card-body">
-
-      <!-- KDV -->
-      <div class="kdv-row" style="margin-bottom:20px;">
-        <span style="font-size:13px;font-weight:600;color:var(--gray-700);">KDV:</span>
-        <div class="kdv-toggle">
-          <input type="radio" name="kdv" id="kdvYok" value="0" checked onchange="hesapla()" />
-          <label for="kdvYok">KDV Yok</label>
-          <input type="radio" name="kdv" id="kdv10" value="10" onchange="hesapla()" />
-          <label for="kdv10">%10</label>
-          <input type="radio" name="kdv" id="kdv20" value="20" onchange="hesapla()" />
-          <label for="kdv20">%20</label>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-          <span style="font-size:13px;font-weight:600;color:var(--gray-700);">Kâr Marjı (%):</span>
-          <input type="number" id="karMarji" placeholder="0" min="0" max="100" step="0.5"
-                 style="width:80px;" oninput="hesapla()" />
-        </div>
+    <div class="modal-body">
+      <!-- Lock -->
+      <div class="lock" id="lockEl">
+        <div class="lock-icon">🔒</div>
+        <h3>Yönetim Paneli</h3>
+        <p>Devam etmek için şifreyi girin</p>
+        <input class="pin-in" type="password" id="pinIn" maxlength="6" placeholder="••••" onkeyup="if(event.key==='Enter')pinKontrol()"/>
+        <p class="pin-err" id="pinErr"></p>
+        <button class="save-btn" style="margin-top:12px;" onclick="pinKontrol()">Giriş</button>
       </div>
+      <!-- İçerik -->
+      <div id="adminCont" style="display:none;">
+        <div class="atabs">
+          <button class="atab active" id="atab-levha" onclick="adminTab('levha')">📋 Levha Listesi</button>
+          <button class="atab" id="atab-lazer" onclick="adminTab('lazer')">✂️ Lazer Fiyatları</button>
+          <button class="atab" id="atab-veri" onclick="adminTab('veri')">💾 Veri Aktar</button>
+        </div>
 
-      <!-- Özet Tablo -->
-      <div class="summary-box">
-        <div class="summary-line">
-          <span class="label">🔩 Malzeme Maliyeti</span>
-          <span class="value" id="sum_malzeme">₺0,00</span>
+        <!-- Levha panel -->
+        <div id="apanel-levha">
+          <table class="atable">
+            <thead><tr><th>Ölçü</th><th>Kal.</th><th>Kg</th><th>€/kg</th><th>Top.€</th><th>Doğr.€</th><th></th></tr></thead>
+            <tbody id="aLevhaTbody"></tbody>
+          </table>
+          <div class="add-form">
+            <div class="f"><label>En</label><input type="number" id="naEn" placeholder="620"/></div>
+            <div class="f"><label>Boy</label><input type="number" id="naBoy" placeholder="2480"/></div>
+            <div class="f"><label>Kal.(mm)</label><input type="number" id="naKal" placeholder="2.5" step="0.1"/></div>
+            <div class="f"><label>Kg</label><input type="number" id="naKg" placeholder="30.5" step="0.01"/></div>
+            <div class="f"><label>€/kg</label><input type="number" id="naKgE" placeholder="2.10" step="0.01"/></div>
+            <div class="f"><label>Doğr.€</label><input type="number" id="naDogru" placeholder="12.10" step="0.01"/></div>
+            <button class="save-btn" onclick="levhaEkleAdmin()">+ Ekle</button>
+          </div>
         </div>
-        <div class="summary-line">
-          <span class="label">⚒️ Düzleme</span>
-          <span class="value" id="sum_duzleme">₺0,00</span>
+
+        <!-- Lazer panel -->
+        <div id="apanel-lazer" style="display:none;">
+          <table class="atable">
+            <thead><tr><th>Tip</th><th>Çap</th><th>Kal.</th><th>Diş</th><th>₺ Fiyat</th><th></th></tr></thead>
+            <tbody id="aLazerTbody"></tbody>
+          </table>
+          <div class="add-form">
+            <div class="f"><label>Tip</label>
+              <select id="nlTip"><option>HW</option><option>TCG</option><option>AP</option><option>RP</option><option>MRP</option></select>
+            </div>
+            <div class="f"><label>Çap</label><input type="number" id="nlCap" placeholder="300"/></div>
+            <div class="f"><label>Kal.</label><input type="number" id="nlKal" placeholder="2.5" step="0.1"/></div>
+            <div class="f"><label>Diş</label><input type="number" id="nlDis" placeholder="96"/></div>
+            <div class="f"><label>₺ Fiyat</label><input type="number" id="nlFiyat" placeholder="89"/></div>
+            <button class="save-btn" onclick="lazerEkleAdmin()">+ Ekle</button>
+          </div>
         </div>
-        <div class="summary-line">
-          <span class="label">✂️ Lazer Kesim</span>
-          <span class="value" id="sum_lazer">₺0,00</span>
+
+        <!-- Veri Aktarım paneli -->
+        <div id="apanel-veri" style="display:none;">
+          <div style="display:grid;gap:16px;">
+
+            <!-- Dışa Aktar -->
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;">
+              <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">📤 Dışa Aktar</p>
+              <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Tüm veriler (levhalar + lazer fiyatları + Uğur fiyatları) JSON dosyasına kaydedilir. Bu dosyayı başka bilgisayara taşıyıp içe aktarabilirsin.</p>
+              <button class="save-btn" onclick="veriDisaAktar()" style="width:100%;">💾 Verileri İndir (JSON)</button>
+            </div>
+
+            <!-- İçe Aktar -->
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;">
+              <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">📥 İçe Aktar</p>
+              <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Daha önce dışa aktarılan JSON dosyasını seç. Mevcut veriler bu dosyadakilerle değiştirilir.</p>
+              <label style="display:block;width:100%;padding:10px;background:var(--surface3);border:1.5px dashed var(--border2);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:13px;color:var(--accent2);transition:all .15s;"
+                     onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
+                📂 JSON Dosyası Seç
+                <input type="file" accept=".json" onchange="veriIceAktar(event)" style="display:none;"/>
+              </label>
+              <div id="aktarSonuc" style="margin-top:10px;font-size:12px;min-height:18px;"></div>
+            </div>
+
+            <!-- Versiyon Bilgisi -->
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <p style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;">Veri Versiyonu</p>
+                <p style="font-size:11px;color:var(--text3);margin-top:2px;">HTML'deki DATA_VERSIYON sabiti</p>
+              </div>
+              <span id="versionBadge" style="padding:4px 12px;background:var(--accent-glow);border:1px solid var(--accent);border-radius:20px;font-size:13px;font-weight:700;color:var(--accent2);">v1</span>
+            </div>
+
+            <!-- Sıfırla -->
+            <div style="background:var(--surface2);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-sm);padding:18px;">
+              <p style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ Fabrika Ayarlarına Dön</p>
+              <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Tüm değişiklikler silinir, HTML'deki başlangıç verileri yüklenir.</p>
+              <button onclick="veriSifirla()" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);color:var(--red);font-size:13px;font-weight:600;cursor:pointer;">🗑 Tüm Verileri Sıfırla</button>
+            </div>
+          </div>
         </div>
-        <div class="summary-line">
-          <span class="label">➕ Ek Kalemler</span>
-          <span class="value" id="sum_ekkalem">₺0,00</span>
-        </div>
-        <div class="summary-line">
-          <span class="label">💼 Diğer Giderler</span>
-          <span class="value" id="sum_diger">₺0,00</span>
-        </div>
-        <div class="summary-line">
-          <span class="label" style="font-weight:600;">Ara Toplam</span>
-          <span class="value" id="sum_ara" style="color:var(--primary-dark);">₺0,00</span>
-        </div>
-        <div class="summary-line" id="karRow" style="display:none;">
-          <span class="label">📈 Kâr Marjı</span>
-          <span class="value" id="sum_kar" style="color:var(--accent);">₺0,00</span>
-        </div>
-        <div class="summary-line kdv-line" id="kdvRow" style="display:none;">
-          <span class="label" id="kdvLabel">KDV (%20)</span>
-          <span class="value" id="sum_kdv">₺0,00</span>
-        </div>
-        <div class="summary-line total">
-          <span class="label">💰 GENEL TOPLAM</span>
-          <span class="value" id="sum_toplam">₺0,00</span>
-        </div>
+
       </div>
-
-      <!-- Notlar -->
-      <div style="margin-top:16px;">
-        <div class="field">
-          <label>Notlar / Açıklama</label>
-          <textarea id="notlar" rows="3" placeholder="Bu hesaplama ile ilgili notlar..."></textarea>
-        </div>
-      </div>
-
     </div>
   </div>
-
-  <!-- ACTIONS -->
-  <div class="actions no-print">
-    <button class="btn btn-primary" onclick="window.print()">🖨️ Yazdır / PDF</button>
-    <button class="btn btn-outline" onclick="formuTemizle()">🗑️ Formu Temizle</button>
-  </div>
-
-  <div style="text-align:center;color:var(--gray-400);font-size:11px;margin-top:24px;padding-bottom:8px;" class="no-print">
-    Çelik Levha Maliyet Hesaplama • Tüm hesaplamalar tarayıcıda yapılmaktadır
-  </div>
-
 </div>
 
 <script>
-  /* ─── YARDIMCI ─── */
-  const $ = id => document.getElementById(id);
-  const num = id => parseFloat($(id)?.value) || 0;
-  const fmt = v => v.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2});
+/* ══ VERİ ══ */
+const LEVHA_D=[
+  {en:310,boy:2050,kalinlik:1.8,kg:9,kgEur:2.25,topEur:20.25,dograEur:2.93},
+  {en:308,boy:2164,kalinlik:2.2,kg:11.3,kgEur:2.10,topEur:23.73,dograEur:5.46},
+  {en:622,boy:2000,kalinlik:2.5,kg:24.5,kgEur:2.35,topEur:57.58,dograEur:4.88},
+  {en:620,boy:2480,kalinlik:2.5,kg:30.5,kgEur:2.10,topEur:64.05,dograEur:12.10},
+  {en:618,boy:2488,kalinlik:2.5,kg:null,kgEur:null,topEur:null,dograEur:12.10},
+  {en:455,boy:1385,kalinlik:2.8,kg:14.15,kgEur:2.35,topEur:33.25,dograEur:4.55},
+  {en:620,boy:2480,kalinlik:3.5,kg:42,kgEur:2.55,topEur:107.10,dograEur:13.62},
+];
+const LAZER_D=[
+  {tip:'HW',cap:230,kalinlik:2.2,dis:40,fiyat:40},
+  {tip:'HW',cap:300,kalinlik:2.2,dis:48,fiyat:54},
+  {tip:'HW',cap:300,kalinlik:2.2,dis:60,fiyat:64},
+  {tip:'HW',cap:350,kalinlik:2.8,dis:54,fiyat:56},
+  {tip:'HW',cap:400,kalinlik:2.8,dis:72,fiyat:73},
+  {tip:'HW',cap:450,kalinlik:2.8,dis:72,fiyat:73},
+  {tip:'HW',cap:500,kalinlik:3.5,dis:72,fiyat:97},
+  {tip:'HW',cap:550,kalinlik:3.5,dis:72,fiyat:109},
+  {tip:'TCG',cap:125,kalinlik:2.2,dis:24,fiyat:33},
+  {tip:'TCG',cap:250,kalinlik:2.2,dis:80,fiyat:52},
+  {tip:'TCG',cap:300,kalinlik:2.2,dis:96,fiyat:87},
+  {tip:'AP',cap:125,kalinlik:2.5,dis:24,fiyat:34},
+  {tip:'AP',cap:250,kalinlik:2.5,dis:80,fiyat:55},
+  {tip:'AP',cap:300,kalinlik:2.5,dis:60,fiyat:61},
+  {tip:'AP',cap:300,kalinlik:2.5,dis:72,fiyat:63},
+  {tip:'AP',cap:300,kalinlik:2.5,dis:96,fiyat:89},
+  {tip:'AP',cap:350,kalinlik:2.8,dis:108,fiyat:105},
+  {tip:'RP',cap:300,kalinlik:2.2,dis:28,fiyat:50},
+  {tip:'MRP',cap:150,kalinlik:2.2,dis:32,fiyat:100},
+  {tip:'MRP',cap:300,kalinlik:2.2,dis:24,fiyat:102},
+  {tip:'MRP',cap:350,kalinlik:2.8,dis:28,fiyat:50},
+  {tip:'MRP',cap:450,kalinlik:3.5,dis:32,fiyat:89},
+];
+const gL=()=>JSON.parse(localStorage.getItem('levhalar')||'null')||LEVHA_D;
+const gLz=()=>JSON.parse(localStorage.getItem('lazerler')||'null')||LAZER_D;
+const sL=d=>localStorage.setItem('levhalar',JSON.stringify(d));
+const sLz=d=>localStorage.setItem('lazerler',JSON.stringify(d));
 
-  /* ─── BUGÜNÜN TARİHİ ─── */
-  window.onload = () => {
-    const t = $('tarih');
-    if (t) t.value = new Date().toISOString().split('T')[0];
-    // İlk başlangıç kalemleri
-    giderEkle('Nakliye', '');
-    giderEkle('İşçilik', '');
+/* ══ VERSİYON KONTROLÜ ══
+   Bu sayıyı her fiyat/veri güncellemesinde 1 artır.
+   GitHub'a push edince tüm kullanıcılar otomatik yeni verileri alır. */
+const DATA_VERSIYON = 1;
+
+function versionKontrol(){
+  const kayitli = localStorage.getItem('dataVersiyon');
+  if(kayitli !== String(DATA_VERSIYON)){
+    // Yeni versiyon tespit edildi → eski localStorage verileri temizle
+    localStorage.removeItem('levhalar');
+    localStorage.removeItem('lazerler');
+    localStorage.removeItem('ugur');
+    localStorage.setItem('dataVersiyon', String(DATA_VERSIYON));
+  }
+}
+
+/* ══ DURUM ══ */
+let selectedLevha=null;
+let levhaModu='liste';
+let adminUnlocked=false;
+let tIdx=0;
+
+/* ══ INIT ══ */
+/* ══ GİRİŞ ══ */
+const GIRIS_SIFRE='3940';
+function girisKontrol(){
+  const val=document.getElementById('girisPin').value;
+  if(val===GIRIS_SIFRE){
+    document.getElementById('girisEkrani').style.display='none';
+    document.getElementById('anaIcerik').style.display='';
+    sessionStorage.setItem('girisYapildi','1');
+    appBaslat();
+  } else {
+    const err=document.getElementById('girisErr');
+    err.textContent='❌ Hatalı şifre';
+    document.getElementById('girisPin').value='';
+    document.getElementById('girisPin').focus();
+    setTimeout(()=>err.textContent='',2000);
+  }
+}
+
+window.onload=()=>{
+  // Aynı sekmede zaten giriş yapıldıysa direkt aç
+  if(sessionStorage.getItem('girisYapildi')==='1'){
+    document.getElementById('girisEkrani').style.display='none';
+    document.getElementById('anaIcerik').style.display='';
+    appBaslat();
+  } else {
+    setTimeout(()=>document.getElementById('girisPin').focus(),100);
+  }
+};
+
+function appBaslat(){
+  versionKontrol();
+  levhaListeRender();
+  testereEkle();
+};
+
+/* ══ KUR ══ */
+async function kurCek(){
+  const btn=document.getElementById('kurBtn');
+  btn.disabled=true;btn.textContent='⏳...';
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/EUR');
+    const d=await r.json();
+    if(d.result==='success'){
+      document.getElementById('eurKur').value=(d.rates.TRY).toFixed(2);
+      document.getElementById('usdKur').value=(d.rates.TRY/d.rates.USD).toFixed(2);
+      const b=document.getElementById('kurBadge');
+      b.textContent='Güncel ✓';b.className='kbadge';
+    }else throw 0;
+  }catch{alert('Kur çekilemedi. Manuel giriniz.');}
+  btn.disabled=false;btn.textContent='🔄 Kuru Çek';
+}
+
+/* ══ LEVHA LİSTESİ ══ */
+function levhaListeRender(){
+  const levhalar=gL();
+  const el=document.getElementById('levhaListeEl');
+  el.innerHTML=levhalar.map((l,i)=>{
+    const olcu=`${l.en}×${l.boy}`;
+    const kg=l.kg?`${l.kg} kg`:'— kg';
+    const fiyat=l.topEur?`€${l.topEur.toFixed(2)}`:'—';
+    const kgf=l.kgEur?`€${l.kgEur}/kg`:'—';
+    return `<div class="levha-item" id="li${i}" onclick="levhaSecListeden(${i})">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">${olcu} mm<span class="kal-chip">${l.kalinlik}mm</span></div>
+        <div class="sub">${kg} · ${kgf} · Doğr: €${l.dograEur.toFixed(2)}</div>
+      </div>
+      <div class="li-price">
+        <div class="big">${fiyat}</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div>`;
+  }).join('');
+  // veriyi DOM'a bağla
+  levhalar.forEach((l,i)=>{const el=document.getElementById('li'+i);if(el)el._d=l;});
+}
+
+function levhaTabi(t){
+  levhaModu=t;
+  document.getElementById('ltab-liste').className='ltab'+(t==='liste'?' active':'');
+  document.getElementById('ltab-manuel').className='ltab'+(t==='manuel'?' active':'');
+  document.getElementById('panel-liste').style.display=t==='liste'?'':'none';
+  document.getElementById('panel-manuel').style.display=t==='manuel'?'':'none';
+  selectedLevha=null;
+}
+
+function levhaSecListeden(i){
+  document.querySelectorAll('.levha-item').forEach(e=>e.classList.remove('selected'));
+  const el=document.getElementById('li'+i);
+  el.classList.add('selected');
+  selectedLevha=el._d;
+  levhaKapat(i);
+}
+
+function levhaKapat(secilenIdx){
+  // Seçilmeyenleri gizle, seçileni göster + değiştir butonu ekle
+  const levhalar=gL();
+  levhalar.forEach((_,i)=>{
+    const el=document.getElementById('li'+i);
+    if(!el) return;
+    if(i===secilenIdx){
+      el.style.display='';
+      // Sağ tarafına "Değiştir" butonu ekle
+      if(!el.querySelector('.degistir-btn')){
+        const btn=document.createElement('button');
+        btn.className='degistir-btn';
+        btn.textContent='Değiştir';
+        btn.onclick=(e)=>{e.stopPropagation();levhaAc();};
+        el.appendChild(btn);
+      }
+    } else {
+      el.style.display='none';
+    }
+  });
+}
+
+function levhaAc(){
+  // Tüm levhaları tekrar göster, değiştir butonunu kaldır
+  const levhalar=gL();
+  levhalar.forEach((_,i)=>{
+    const el=document.getElementById('li'+i);
+    if(el){
+      el.style.display='';
+      const btn=el.querySelector('.degistir-btn');
+      if(btn) btn.remove();
+    }
+  });
+}
+
+function getLevhaBilgisi(){
+  if(levhaModu==='liste') return selectedLevha;
+  const en=parseFloat(document.getElementById('mEn').value)||0;
+  const boy=parseFloat(document.getElementById('mBoy').value)||0;
+  const kal=parseFloat(document.getElementById('mKal').value)||0;
+  const kg=parseFloat(document.getElementById('mKg').value)||0;
+  const kgEur=parseFloat(document.getElementById('mKgEur').value)||0;
+  const dograEur=parseFloat(document.getElementById('mDogru').value)||0;
+  if(!en||!boy||!kal||!kg||!kgEur){return null;}
+  return{en,boy,kalinlik:kal,kg,kgEur,topEur:kg*kgEur,dograEur};
+}
+
+/* ══ TESTERE SATIRLARI ══ */
+function testereEkle(){
+  tIdx++;
+  const id='tr'+tIdx;
+  const div=document.createElement('div');
+  div.className='t-row';div.id=id;
+  div.innerHTML=`
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0"
+            oninput="capAra('${id}',this.value)"
+            onfocus="capAra('${id}',this.value)"
+            onblur="setTimeout(()=>capKapat('${id}'),180)"
+            autocomplete="off"/>
+          <div class="cap-dropdown" id="dd${id}"></div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"/></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"/></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"/></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"/></div>
+      <button class="remove-row" onclick="tRowSil('${id}')">✕</button>
+    </div>
+  `;
+  document.getElementById('tRows').appendChild(div);
+}
+
+function capAra(rowId,val){
+  const dd=document.getElementById('dd'+rowId);
+  const v=val.trim();
+  if(!v){dd.className='cap-dropdown';return;}
+  const lazerler=gLz();
+  const esles=lazerler.filter(l=>String(l.cap).startsWith(v));
+  if(!esles.length){
+    dd.className='cap-dropdown open';
+    dd.innerHTML=`<div class="cap-opt manual-opt">⌀${v} mm — Manuel devam et</div>`;
+    return;
+  }
+  dd.className='cap-dropdown open';
+  dd.innerHTML=esles.map(l=>`
+    <div class="cap-opt" onmousedown="capSec('${rowId}',${JSON.stringify(l).replace(/"/g,'&quot;')})">
+      <div class="co-left">
+        <span class="co-title">${l.tip} · ⌀${l.cap}mm · ${l.dis} diş <span style="font-size:10px;color:var(--text3);">(${l.kalinlik}mm)</span></span>
+      </div>
+      <span class="co-price">₺${l.fiyat}</span>
+    </div>
+  `).join('');
+}
+
+function capSec(rowId, l){
+  const row=document.getElementById(rowId);
+  row.querySelector('.cap-in').value=l.cap;
+  row.querySelector('.t-tip').value=l.tip;
+  row.querySelector('.t-dis').value=l.dis;
+  row.querySelector('.t-lazer').value=l.fiyat;
+  capKapat(rowId);
+}
+
+function capKapat(rowId){
+  const dd=document.getElementById('dd'+rowId);
+  if(dd) dd.className='cap-dropdown';
+}
+
+function tRowSil(id){document.getElementById(id)?.remove();}
+
+/* ══ HESAPLAMA ══ */
+function hesapla(){
+  const eurKur=parseFloat(document.getElementById('eurKur').value)||0;
+  if(!eurKur){alert('Lütfen EUR/TRY kurunu girin.');return;}
+  const levha=getLevhaBilgisi();
+  if(!levha){alert('Lütfen bir levha seçin veya manuel girin.');return;}
+  const levhaAdedi=parseInt(document.getElementById('levhaAdedi').value)||1;
+  const rows=document.querySelectorAll('.t-row');
+  if(!rows.length){alert('En az bir testere ekleyin.');return;}
+  let testereler=[];
+  for(const row of rows){
+    const cap=parseFloat(row.querySelector('.cap-in').value)||0;
+    const dis=parseFloat(row.querySelector('.t-dis').value)||0;
+    const tip=row.querySelector('.t-tip').value||'—';
+    const adet=parseInt(row.querySelector('.t-adet').value)||1;
+    const lazer=parseFloat(row.querySelector('.t-lazer').value)||0;
+    if(!cap){alert('Tüm satırlarda çap girilmeli.');return;}
+    if(!lazer){alert('Tüm satırlarda lazer fiyatı girilmeli.');return;}
+    const alan=Math.PI*Math.pow(cap/2,2);
+    testereler.push({tip,cap,dis,adet,lazer,alan,topAlan:alan*adet});
+  }
+  const genelAlan=testereler.reduce((s,t)=>s+t.topAlan,0);
+  let levhaMalBirim=levha.topEur;
+  if(!levhaMalBirim&&levha.kg&&levha.kgEur) levhaMalBirim=levha.kg*levha.kgEur;
+  if(!levhaMalBirim){alert('Levha toplam maliyeti hesaplanamadı.');return;}
+  const levhaMal=levhaMalBirim*levhaAdedi;           // toplam levha maliyeti
+  const dograMal=(levha.dograEur||0)*levhaAdedi;     // toplam doğrultma maliyeti
+  const sonuclar=testereler.map(t=>{
+    const oran=t.topAlan/genelAlan;
+    const lPay=levhaMal*oran;
+    const dPay=dograMal*oran;
+    const lazEur=(t.lazer*t.adet)/eurKur;
+    const birim=(lPay+dPay+lazEur)/t.adet;
+    return{...t,oran,lPay,dPay,lazEur,topEur:lPay+dPay+lazEur,birim};
+  });
+  renderSonuc(levha,levhaMalBirim,levhaMal,dograMal,levhaAdedi,eurKur,sonuclar,genelAlan);
+}
+
+const E=v=>'€'+v.toFixed(4);
+const E2=v=>'€'+v.toFixed(2);
+const pct=v=>(v*100).toFixed(1)+'%';
+
+/* ══ UĞUR VERİSİ ══ */
+const UGUR_D=[
+  {cap:120,govde:3.9,fiyat:3.48},{cap:121,govde:2.2,fiyat:4.29},{cap:125,govde:2.5,fiyat:4.46},
+  {cap:161,govde:4.4,fiyat:6.44},{cap:200,govde:2.5,fiyat:10.30},{cap:210,govde:1.8,fiyat:7.73},
+  {cap:230,govde:1.8,fiyat:7.73},{cap:250,govde:2.2,fiyat:8.58},{cap:250,govde:2.6,fiyat:8.93},
+  {cap:300,govde:2.2,fiyat:12.02},{cap:300,govde:2.5,fiyat:13.31},
+  {cap:350,govde:2.2,fiyat:18.89},{cap:350,govde:2.4,fiyat:19.32},{cap:350,govde:2.6,fiyat:17.17},
+  {cap:350,govde:2.8,fiyat:17.17},{cap:350,govde:3.0,fiyat:17.17},
+  {cap:400,govde:3.0,fiyat:21.46},{cap:400,govde:3.2,fiyat:23.18},
+  {cap:420,govde:2.2,fiyat:20.60},{cap:420,govde:3.2,fiyat:24.04},
+  {cap:450,govde:2.6,fiyat:24.90},{cap:450,govde:2.8,fiyat:27.04},{cap:450,govde:3.0,fiyat:25.75},
+  {cap:450,govde:3.2,fiyat:27.47},{cap:450,govde:3.6,fiyat:28.33},{cap:450,govde:4.8,fiyat:35.20},
+  {cap:500,govde:2.8,fiyat:30.22},{cap:500,govde:3.2,fiyat:31.33},{cap:500,govde:3.4,fiyat:30.90},
+  {cap:500,govde:3.8,fiyat:32.19},{cap:500,govde:4.8,fiyat:39.49},
+  {cap:520,govde:3.5,fiyat:33.05},
+  {cap:550,govde:2.9,fiyat:33.48},{cap:550,govde:3.0,fiyat:35.20},{cap:550,govde:3.4,fiyat:36.91},
+  {cap:550,govde:3.6,fiyat:38.63},{cap:550,govde:4.8,fiyat:42.06},
+  {cap:600,govde:3.0,fiyat:33.91},{cap:600,govde:3.4,fiyat:36.05},{cap:600,govde:3.6,fiyat:37.77},
+];
+const gU=()=>JSON.parse(localStorage.getItem('ugur')||'null')||UGUR_D;
+const sU=d=>localStorage.setItem('ugur',JSON.stringify(d));
+
+function ugurKarsilastir(cap, govde){
+  const liste=gU().filter(u=>u.cap==cap);
+  if(!liste.length) return null;
+  const tam=liste.find(u=>Math.abs(u.govde-govde)<0.01);
+  if(tam) return {tip:'tam', tam};
+  const altlar=liste.filter(u=>u.govde<govde).sort((a,b)=>b.govde-a.govde);
+  const ustler=liste.filter(u=>u.govde>govde).sort((a,b)=>a.govde-b.govde);
+  return {tip:'aralik', alt:altlar[0]||null, ust:ustler[0]||null};
+}
+
+/* Hızlı sonuç için tek satır Uğur karşılaştırması */
+/* İki komşu kalınlık arası doğrusal interpolasyon ile Uğur tahmini */
+function ugurInterpolasyon(cap, govde){
+  const k=ugurKarsilastir(cap, govde);
+  if(!k) return null;
+  if(k.tip==='tam') return {fiyat:k.tam.fiyat, not:`${k.tam.govde}mm`};
+  const {alt,ust}=k;
+  if(alt && ust){
+    const oran=(govde-alt.govde)/(ust.govde-alt.govde);
+    const fiyat=alt.fiyat+oran*(ust.fiyat-alt.fiyat);
+    return {fiyat, not:`${alt.govde}–${ust.govde}mm arası tahmin`};
+  }
+  if(alt) return {fiyat:alt.fiyat, not:`${alt.govde}mm (en yakın)`};
+  if(ust) return {fiyat:ust.fiyat, not:`${ust.govde}mm (en yakın)`};
+  return null;
+}
+
+/* Hızlı sonuç için tek satır Uğur karşılaştırması */
+function ugurSatir(cap, govde, bizimMaliyet){
+  const u=ugurInterpolasyon(cap, govde);
+  if(!u) return `<span class="ht-ugur-none">—</span>`;
+  const fark=bizimMaliyet-u.fiyat;
+  const yzd=(fark/u.fiyat*100);
+  let badge;
+  if(Math.abs(fark)<0.005) badge=`<span class="diff-badge same">= Eşit</span>`;
+  else if(fark<0) badge=`<span class="diff-badge cheaper">▼ €${Math.abs(fark).toFixed(2)} (%${Math.abs(yzd).toFixed(0)}) ucuz</span>`;
+  else badge=`<span class="diff-badge pricier">▲ €${fark.toFixed(2)} (%${yzd.toFixed(0)}) pahalı</span>`;
+  return `<span class="ht-ugur" title="${u.not}">${E2(u.fiyat)}</span> <span style="font-size:10px;color:var(--text3);">(${u.not})</span>&nbsp;${badge}`;
+}
+
+function detayToggle(){
+  const ic=document.getElementById('detayIcerik');
+  const lbl=document.getElementById('detayToggleLabel');
+  const acik=ic.style.display!=='none';
+  ic.style.display=acik?'none':'';
+  lbl.textContent=acik?'▼ Göster':'▲ Gizle';
+}
+
+function renderSonuc(levha,levhaMalBirim,levhaMal,dograMal,levhaAdedi,kur,sonuclar,topAlan){
+
+  /* ── HIZLI SONUÇ TABLOSU ── */
+  const satirlar=sonuclar.map(s=>{
+    const ugurCol=ugurSatir(s.cap, levha.kalinlik, s.birim);
+    return `<tr>
+      <td>
+        <div class="ht-spec">${s.tip} · ⌀${s.cap}mm${s.dis?' · '+s.dis+' diş':''}</div>
+        <div class="ht-adet">×${s.adet} adet</div>
+      </td>
+      <td><span class="ht-maliyet">${E2(s.birim)}<span> / adet</span></span></td>
+      <td>${ugurCol}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('hizliSonuc').innerHTML=`
+    <div class="hizli-card">
+      <div class="hizli-head">
+        <span style="font-size:18px;">✅</span>
+        <h3>Hesaplama Sonucu</h3>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">${levha.en}×${levha.boy} · ${levha.kalinlik}mm · ${levhaAdedi} levha · EUR/TRY ₺${parseFloat(document.getElementById('eurKur').value).toFixed(2)}</span>
+      </div>
+      <table class="hizli-table">
+        <thead><tr>
+          <th>Testere</th>
+          <th>Birim Maliyet</th>
+          <th>Uğur Karşılaştırması</th>
+        </tr></thead>
+        <tbody>${satirlar}</tbody>
+      </table>
+    </div>`;
+  document.getElementById('hizliSonuc').style.display='';
+
+  /* ── DETAYLI BÖLÜM ── */
+  document.getElementById('rLines').innerHTML=`
+    <div class="rline"><span class="rl">Levha</span><span class="rv">${levha.en}×${levha.boy} · ${levha.kalinlik}mm</span></div>
+    <div class="rline"><span class="rl">Levha Adedi</span><span class="rv" style="color:var(--amber);font-weight:700;">${levhaAdedi} adet</span></div>
+    <div class="rline"><span class="rl">Birim Levha Maliyeti</span><span class="rv">${E2(levhaMalBirim)}</span></div>
+    <div class="rline"><span class="rl">Toplam Levha (${levhaAdedi}×${E2(levhaMalBirim)})</span><span class="rv">${E2(levhaMal)}</span></div>
+    <div class="rline"><span class="rl">Toplam Doğrultma (${levhaAdedi}×${E2(levha.dograEur||0)})</span><span class="rv">${E2(dograMal)}</span></div>
+    <div class="rline"><span class="rl">Levha + Doğrultma</span><span class="rv" style="color:var(--accent2);">${E2(levhaMal+dograMal)}</span></div>
+    <div class="rline"><span class="rl">EUR/TRY Kuru</span><span class="rv">₺${parseFloat(document.getElementById('eurKur').value).toFixed(2)}</span></div>
+    <div class="rline"><span class="rl">Toplam Alan</span><span class="rv">${Math.round(topAlan).toLocaleString('tr-TR')} mm²</span></div>
+  `;
+
+  document.getElementById('rItems').innerHTML=sonuclar.map(s=>`
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">${s.tip} · ⌀${s.cap}mm${s.dis?' · '+s.dis+' diş':''} <span style="font-size:12px;color:var(--text3);">×${s.adet} adet</span></div>
+        <div class="ri-total">${E(s.birim)}<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (${pct(s.oran)})</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">${E(s.lPay/s.adet)}/adet · toplam ${E2(s.lPay)}</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">${E(s.dPay/s.adet)}/adet · toplam ${E2(s.dPay)}</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺${(s.lazer*s.adet).toFixed(2)} ÷ kur)</span><span class="v">${E(s.lazEur/s.adet)}/adet · toplam ${E2(s.lazEur)}</span></div>
+        <div class="ri-sum"><span class="k">Toplam (${s.adet} adet)</span><span class="v">${E2(s.topEur)}</span></div>
+      </div>
+    </div>
+  `).join('');
+
+  /* Detaylı bölümü kapalı başlat */
+  document.getElementById('detayIcerik').style.display='none';
+  document.getElementById('detayToggleLabel').textContent='▼ Göster';
+  const card=document.getElementById('sonucCard');
+  card.style.display='';
+  document.getElementById('hizliSonuc').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ══ ADMİN ══ */
+function adminAc(){
+  document.getElementById('adminModal').classList.add('open');
+  if(!adminUnlocked){
+    document.getElementById('lockEl').style.display='';
+    document.getElementById('adminCont').style.display='none';
+    document.getElementById('pinIn').value='';
+    document.getElementById('pinErr').textContent='';
+    setTimeout(()=>document.getElementById('pinIn').focus(),120);
+  }else{adminDoldur();}
+}
+function adminKapat(){document.getElementById('adminModal').classList.remove('open');}
+document.getElementById('adminModal').addEventListener('click',function(e){if(e.target===this)adminKapat();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')adminKapat();});
+
+function pinKontrol(){
+  if(document.getElementById('pinIn').value==='3940'){
+    adminUnlocked=true;
+    document.getElementById('lockEl').style.display='none';
+    document.getElementById('adminCont').style.display='';
+    adminDoldur();
+  }else{
+    document.getElementById('pinErr').textContent='❌ Hatalı şifre';
+    document.getElementById('pinIn').value='';
+    document.getElementById('pinIn').focus();
+  }
+}
+
+function adminTab(t){
+  ['levha','lazer','veri'].forEach(n=>{
+    document.getElementById('atab-'+n).className='atab'+(n===t?' active':'');
+    document.getElementById('apanel-'+n).style.display=n===t?'':'none';
+  });
+}
+
+/* ══ VERİ AKTARIM ══ */
+function veriDisaAktar(){
+  const data={
+    versiyon:1,
+    tarih:new Date().toISOString(),
+    levhalar:gL(),
+    lazerler:gLz(),
+    ugur:gU()
   };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='testere_veriler_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
-  /* ─── KALEM/GİDER EKLEME ─── */
-  let kalemIndex = 0;
-  function kalemEkle(ad='', fiyat='') {
-    kalemIndex++;
-    const div = document.createElement('div');
-    div.className = 'kalem-row';
-    div.id = 'kalem_' + kalemIndex;
-    div.innerHTML = `
-      <div class="field">
-        <label>Kalem Adı</label>
-        <input type="text" placeholder="Örn: Yüzey İşlemi, Kaynak..." value="${ad}" />
-      </div>
-      <div class="field">
-        <label>Fiyat (₺)</label>
-        <div class="input-wrap">
-          <span class="prefix">₺</span>
-          <input type="number" class="ekKalemFiyat" placeholder="0.00" min="0" step="0.01" value="${fiyat}" oninput="hesapla()" />
-        </div>
-      </div>
-      <button class="remove-btn" onclick="kalemSil('kalem_${kalemIndex}')">✕</button>
-    `;
-    $('ekKalemlerContainer').appendChild(div);
-  }
-  function kalemSil(id) {
-    document.getElementById(id)?.remove();
-    hesapla();
-  }
-
-  let giderIndex = 0;
-  function giderEkle(ad='', fiyat='') {
-    giderIndex++;
-    const div = document.createElement('div');
-    div.className = 'kalem-row';
-    div.id = 'gider_' + giderIndex;
-    div.innerHTML = `
-      <div class="field">
-        <label>Gider Adı</label>
-        <input type="text" placeholder="Örn: Nakliye, Sigorta..." value="${ad}" />
-      </div>
-      <div class="field">
-        <label>Tutar (₺)</label>
-        <div class="input-wrap">
-          <span class="prefix">₺</span>
-          <input type="number" class="giderFiyat" placeholder="0.00" min="0" step="0.01" value="${fiyat}" oninput="hesapla()" />
-        </div>
-      </div>
-      <button class="remove-btn" onclick="giderSil('gider_${giderIndex}')">✕</button>
-    `;
-    $('digerGiderlerContainer').appendChild(div);
-  }
-  function giderSil(id) {
-    document.getElementById(id)?.remove();
-    hesapla();
-  }
-
-  /* ─── ANA HESAPLAMA ─── */
-  function hesapla() {
-    // Malzeme
-    const adet = Math.max(1, num('levhaAdet'));
-    const kg   = num('levhaKg');
-    const toplamKgVal = kg * adet;
-    $('toplamKg').value = toplamKgVal > 0 ? toplamKgVal.toFixed(2) + ' kg' : '';
-
-    let malzeme;
-    const sabit = num('sabitMalzeme');
-    if (sabit > 0) {
-      malzeme = sabit;
-    } else {
-      malzeme = toplamKgVal * num('kgFiyat');
+function veriIceAktar(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.levhalar||!data.lazerler) throw new Error('Geçersiz dosya formatı');
+      if(data.levhalar) sL(data.levhalar);
+      if(data.lazerler) sLz(data.lazerler);
+      if(data.ugur) sU(data.ugur);
+      adminDoldur();
+      levhaListeRender();
+      const el=document.getElementById('aktarSonuc');
+      el.style.color='var(--green)';
+      el.textContent='✓ Veriler başarıyla yüklendi! ('+data.levhalar.length+' levha, '+data.lazerler.length+' lazer kaydı)';
+      setTimeout(()=>el.textContent='',4000);
+    }catch(err){
+      const el=document.getElementById('aktarSonuc');
+      el.style.color='var(--red)';
+      el.textContent='❌ Hata: '+err.message;
     }
-    $('malzemeMaliyet').value = malzeme > 0 ? fmt(malzeme) : '';
+  };
+  reader.readAsText(file);
+  e.target.value=''; // aynı dosyayı tekrar seçebilmek için
+}
 
-    // Sabit işlem
-    const duzleme   = num('duzlemeFiyat');
-    const lazer     = num('lazerkesimFiyat');
+function veriSifirla(){
+  if(!confirm('Tüm değişiklikler silinecek, başlangıç verileri yüklenecek. Emin misin?')) return;
+  localStorage.removeItem('levhalar');
+  localStorage.removeItem('lazerler');
+  localStorage.removeItem('ugur');
+  localStorage.setItem('dataVersiyon', String(DATA_VERSIYON));
+  adminDoldur();
+  levhaListeRender();
+  alert('✓ Sıfırlandı.');
+}
 
-    // Ek kalemler
-    let ekToplam = 0;
-    document.querySelectorAll('.ekKalemFiyat').forEach(el => {
-      ekToplam += parseFloat(el.value) || 0;
-    });
+function adminDoldur(){
+  aLevhaDoldur();
+  aLazerDoldur();
+  const vb=document.getElementById('versionBadge');
+  if(vb) vb.textContent='v'+DATA_VERSIYON;
+}
 
-    // Diğer giderler
-    let digerToplam = 0;
-    document.querySelectorAll('.giderFiyat').forEach(el => {
-      digerToplam += parseFloat(el.value) || 0;
-    });
+function aLevhaDoldur(){
+  const d=gL();
+  document.getElementById('aLevhaTbody').innerHTML=d.map((l,i)=>`
+    <tr>
+      <td style="white-space:nowrap;">${l.en}×${l.boy}</td>
+      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLevhaG(${i},'kalinlik',this.value)" style="width:60px;"/></td>
+      <td><input type="number" value="${l.kg||''}" step="0.01" onchange="aLevhaG(${i},'kg',this.value)" style="width:65px;"/></td>
+      <td><input type="number" value="${l.kgEur||''}" step="0.01" onchange="aLevhaG(${i},'kgEur',this.value)" style="width:60px;"/></td>
+      <td><input type="number" value="${l.topEur||''}" step="0.01" onchange="aLevhaG(${i},'topEur',this.value)" style="width:70px;"/></td>
+      <td><input type="number" value="${l.dograEur}" step="0.01" onchange="aLevhaG(${i},'dograEur',this.value)" style="width:65px;"/></td>
+      <td><button class="del-btn" onclick="aLevhaSil(${i})">Sil</button></td>
+    </tr>
+  `).join('');
+}
+function aLevhaG(i,k,v){const d=gL();d[i][k]=v?parseFloat(v):null;sL(d);}
+function aLevhaSil(i){if(!confirm('Silinsin mi?'))return;const d=gL();d.splice(i,1);sL(d);aLevhaDoldur();levhaListeRender();}
+function levhaEkleAdmin(){
+  const en=parseFloat(document.getElementById('naEn').value)||0;
+  const boy=parseFloat(document.getElementById('naBoy').value)||0;
+  const kal=parseFloat(document.getElementById('naKal').value)||0;
+  const kg=parseFloat(document.getElementById('naKg').value)||null;
+  const kgEur=parseFloat(document.getElementById('naKgE').value)||null;
+  const dogru=parseFloat(document.getElementById('naDogru').value)||0;
+  if(!en||!boy||!kal){alert('En, boy, kalınlık zorunlu.');return;}
+  const d=gL();
+  d.push({en,boy,kalinlik:kal,kg,kgEur,topEur:(kg&&kgEur)?kg*kgEur:null,dograEur:dogru});
+  sL(d);aLevhaDoldur();levhaListeRender();
+  ['naEn','naBoy','naKal','naKg','naKgE','naDogru'].forEach(id=>document.getElementById(id).value='');
+}
 
-    const ara = malzeme + duzleme + lazer + ekToplam + digerToplam;
-
-    // Kâr marjı
-    const karPct = num('karMarji');
-    const kar    = ara * (karPct / 100);
-
-    // KDV
-    const kdvPct = parseInt(document.querySelector('input[name=kdv]:checked')?.value || '0');
-    const base   = ara + kar;
-    const kdv    = base * (kdvPct / 100);
-    const toplam = base + kdv;
-
-    // Özet güncelle
-    $('sum_malzeme').textContent = '₺' + fmt(malzeme);
-    $('sum_duzleme').textContent = '₺' + fmt(duzleme);
-    $('sum_lazer').textContent   = '₺' + fmt(lazer);
-    $('sum_ekkalem').textContent = '₺' + fmt(ekToplam);
-    $('sum_diger').textContent   = '₺' + fmt(digerToplam);
-    $('sum_ara').textContent     = '₺' + fmt(ara);
-    $('sum_toplam').textContent  = '₺' + fmt(toplam);
-
-    const karRow = $('karRow');
-    if (karPct > 0) {
-      karRow.style.display = 'flex';
-      $('sum_kar').textContent = '₺' + fmt(kar) + ' (%' + karPct + ')';
-    } else {
-      karRow.style.display = 'none';
-    }
-
-    const kdvRow = $('kdvRow');
-    if (kdvPct > 0) {
-      kdvRow.style.display = 'flex';
-      $('kdvLabel').textContent = 'KDV (%' + kdvPct + ')';
-      $('sum_kdv').textContent  = '₺' + fmt(kdv);
-    } else {
-      kdvRow.style.display = 'none';
-    }
-  }
-
-  /* ─── FORM TEMİZLE ─── */
-  function formuTemizle() {
-    if (!confirm('Tüm alanlar temizlensin mi?')) return;
-    document.querySelectorAll('input[type=number], input[type=text]')
-      .forEach(el => { if (!el.readOnly) el.value = ''; });
-    $('notlar').value = '';
-    $('levhaAdet').value = 1;
-    document.getElementById('kdvYok').checked = true;
-    $('ekKalemlerContainer').innerHTML = '';
-    $('digerGiderlerContainer').innerHTML = '';
-    giderEkle('Nakliye', '');
-    giderEkle('İşçilik', '');
-    hesapla();
-  }
+function aLazerDoldur(){
+  const d=gLz();
+  document.getElementById('aLazerTbody').innerHTML=d.map((l,i)=>`
+    <tr>
+      <td><b style="color:var(--accent2);">${l.tip}</b></td>
+      <td><input type="number" value="${l.cap}" onchange="aLazerG(${i},'cap',this.value)" style="width:60px;"/></td>
+      <td><input type="number" value="${l.kalinlik}" step="0.1" onchange="aLazerG(${i},'kalinlik',this.value)" style="width:55px;"/></td>
+      <td><input type="number" value="${l.dis}" onchange="aLazerG(${i},'dis',this.value)" style="width:55px;"/></td>
+      <td><input type="number" value="${l.fiyat}" step="0.01" onchange="aLazerG(${i},'fiyat',this.value)" style="width:65px;"/></td>
+      <td><button class="del-btn" onclick="aLazerSil(${i})">Sil</button></td>
+    </tr>
+  `).join('');
+}
+function aLazerG(i,k,v){const d=gLz();d[i][k]=parseFloat(v)||0;sLz(d);}
+function aLazerSil(i){if(!confirm('Silinsin mi?'))return;const d=gLz();d.splice(i,1);sLz(d);aLazerDoldur();}
+function lazerEkleAdmin(){
+  const tip=document.getElementById('nlTip').value;
+  const cap=parseFloat(document.getElementById('nlCap').value)||0;
+  const kal=parseFloat(document.getElementById('nlKal').value)||0;
+  const dis=parseFloat(document.getElementById('nlDis').value)||0;
+  const fiyat=parseFloat(document.getElementById('nlFiyat').value)||0;
+  if(!cap||!kal||!dis||!fiyat){alert('Tüm alanlar zorunlu.');return;}
+  const d=gLz();d.push({tip,cap,kalinlik:kal,dis,fiyat});
+  sLz(d);aLazerDoldur();
+  ['nlCap','nlKal','nlDis','nlFiyat'].forEach(id=>document.getElementById(id).value='');
+}
 </script>
 </body>
 </html>
