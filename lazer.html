@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<html lang="tr"><head><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Testere Gövdesi Maliyet Hesaplama</title>
 <style>
 :root{
@@ -291,20 +292,18 @@ select option{background:#1a1d2e;}
 <body>
 
 <!-- GİRİŞ EKRANI -->
-<div id="girisEkrani">
+<div id="girisEkrani" style="display: none;">
   <div class="giris-kutu">
     <div class="giris-logo">⚙️</div>
     <h2>Testere Maliyet</h2>
     <p>Devam etmek için şifreyi girin</p>
-    <input class="giris-pin" type="password" id="girisPin" maxlength="6"
-           placeholder="••••"
-           onkeyup="if(event.key==='Enter') girisKontrol()"/>
+    <input class="giris-pin" type="password" id="girisPin" maxlength="6" placeholder="••••" onkeyup="if(event.key==='Enter') girisKontrol()">
     <button class="giris-btn" onclick="girisKontrol()">Giriş →</button>
     <div class="giris-err" id="girisErr"></div>
   </div>
 </div>
 
-<div class="wrap" id="anaIcerik" style="display:none;">
+<div class="wrap" id="anaIcerik" style="">
 
 <!-- HEADER -->
 <div class="header">
@@ -323,15 +322,15 @@ select option{background:#1a1d2e;}
   <div class="kf">
     <label>EUR/TRY</label>
     <div class="kr">
-      <input type="number" id="eurKur" placeholder="0.00" step="0.01" min="0"/>
-      <span class="kbadge stale" id="kurBadge">Manuel</span>
+      <input type="number" id="eurKur" placeholder="0.00" step="0.01" min="0">
+      <span class="kbadge" id="kurBadge">Güncel ✓</span>
     </div>
   </div>
   <div class="kur-sep"></div>
   <div class="kf">
     <label>USD/TRY</label>
     <div class="kr">
-      <input type="number" id="usdKur" placeholder="0.00" step="0.01" min="0"/>
+      <input type="number" id="usdKur" placeholder="0.00" step="0.01" min="0">
     </div>
   </div>
   <button class="kur-btn" id="kurBtn" onclick="kurCek()">🔄 Kuru Çek</button>
@@ -346,24 +345,104 @@ select option{background:#1a1d2e;}
   </div>
   <div class="card-body">
     <div class="ltabs">
-      <button class="ltab active" id="ltab-liste" onclick="levhaTabi('liste')">📋 Listeden Seç</button>
-      <button class="ltab" id="ltab-manuel" onclick="levhaTabi('manuel')">✏️ Manuel Gir</button>
+      <button class="ltab" id="ltab-liste" onclick="levhaTabi('liste')">📋 Listeden Seç</button>
+      <button class="ltab active" id="ltab-manuel" onclick="levhaTabi('manuel')">✏️ Manuel Gir</button>
     </div>
 
     <!-- Listeden -->
-    <div id="panel-liste">
-      <div class="levha-grid" id="levhaListeEl"></div>
+    <div id="panel-liste" style="display: none;">
+      <div class="levha-grid" id="levhaListeEl"><div class="levha-item" id="li0" onclick="levhaSecListeden(0)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">310×2050 mm<span class="kal-chip">1.8mm</span></div>
+        <div class="sub"><span style="">9 kg</span> · €2.25/kg · Doğr: €2.93</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€20.25</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li1" onclick="levhaSecListeden(1)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">308×2164 mm<span class="kal-chip">2.2mm</span></div>
+        <div class="sub"><span style="">11.3 kg</span> · €2.1/kg · Doğr: €5.46</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€23.73</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li2" onclick="levhaSecListeden(2)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">622×2000 mm<span class="kal-chip">2.5mm</span></div>
+        <div class="sub"><span style="">24.5 kg</span> · €2.35/kg · Doğr: €4.88</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€57.58</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li3" onclick="levhaSecListeden(3)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">620×2480 mm<span class="kal-chip">2.5mm</span></div>
+        <div class="sub"><span style="">30.5 kg</span> · €2.1/kg · Doğr: €12.10</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€64.05</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li4" onclick="levhaSecListeden(4)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">618×2488 mm<span class="kal-chip">2.5mm</span></div>
+        <div class="sub"><span style="color:var(--amber)">~30.2 kg</span> · — · Doğr: €12.10</div>
+      </div>
+      <div class="li-price">
+        <div class="big">—</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li5" onclick="levhaSecListeden(5)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">455×1385 mm<span class="kal-chip">2.8mm</span></div>
+        <div class="sub"><span style="">14.15 kg</span> · €2.35/kg · Doğr: €4.55</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€33.25</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li6" onclick="levhaSecListeden(6)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">620×2480 mm<span class="kal-chip">3.5mm</span></div>
+        <div class="sub"><span style="">42 kg</span> · €2.55/kg · Doğr: €13.62</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€107.10</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div><div class="levha-item" id="li7" onclick="levhaSecListeden(7)">
+      <div class="lradio"></div>
+      <div class="li-info">
+        <div class="title">620×2480 mm<span class="kal-chip">2.5mm</span></div>
+        <div class="sub"><span style="">30.15 kg</span> · €2.45/kg · Doğr: €11.50</div>
+      </div>
+      <div class="li-price">
+        <div class="big">€73.87</div>
+        <div class="sm">Toplam €</div>
+      </div>
+    </div></div>
     </div>
 
     <!-- Manuel -->
-    <div id="panel-manuel" style="display:none;">
+    <div id="panel-manuel" style="">
       <div class="grid g3">
-        <div class="field"><label>En <span>(mm)</span></label><input type="number" id="mEn" placeholder="620" min="0"/></div>
-        <div class="field"><label>Boy <span>(mm)</span></label><input type="number" id="mBoy" placeholder="2480" min="0"/></div>
-        <div class="field"><label>Kalınlık <span>(mm)</span></label><input type="number" id="mKal" placeholder="2.5" step="0.1" min="0"/></div>
-        <div class="field"><label>Ağırlık <span>(kg)</span></label><input type="number" id="mKg" placeholder="30.5" step="0.01" min="0"/></div>
-        <div class="field"><label>Kg Fiyatı <span>(€)</span></label><input type="number" id="mKgEur" placeholder="2.10" step="0.01" min="0"/></div>
-        <div class="field"><label>Doğrultma <span>(€)</span></label><input type="number" id="mDogru" placeholder="12.10" step="0.01" min="0"/></div>
+        <div class="field"><label>En <span>(mm)</span></label><input type="number" id="mEn" placeholder="620" min="0"></div>
+        <div class="field"><label>Boy <span>(mm)</span></label><input type="number" id="mBoy" placeholder="2480" min="0"></div>
+        <div class="field"><label>Kalınlık <span>(mm)</span></label><input type="number" id="mKal" placeholder="2.5" step="0.1" min="0"></div>
+        <div class="field"><label>Ağırlık <span>(kg)</span></label><input type="number" id="mKg" placeholder="30.5" step="0.01" min="0"></div>
+        <div class="field"><label>Kg Fiyatı <span>(€)</span></label><input type="number" id="mKgEur" placeholder="2.10" step="0.01" min="0"></div>
+        <div class="field"><label>Doğrultma <span>(€)</span></label><input type="number" id="mDogru" placeholder="12.10" step="0.01" min="0"></div>
       </div>
     </div>
 
@@ -371,8 +450,7 @@ select option{background:#1a1d2e;}
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
       <div class="field" style="width:200px;">
         <label>Kaç Levha Kullanıldı?</label>
-        <input type="number" id="levhaAdedi" placeholder="1" value="1" min="1" step="1"
-               style="font-size:18px;font-weight:700;text-align:center;"/>
+        <input type="number" id="levhaAdedi" placeholder="1" value="1" min="1" step="1" style="font-size:18px;font-weight:700;text-align:center;">
       </div>
       <p style="font-size:12px;color:var(--text3);margin-top:18px;">
         Toplam levha + doğrultma maliyeti bu sayı ile çarpılarak hesaplanır.
@@ -392,7 +470,215 @@ select option{background:#1a1d2e;}
     <div class="alert alert-info" style="margin-bottom:14px;">
       💡 Çap alanına numara yazın — eşleşen tüm testereler belirecek. Birden fazla tip ekleyebilirsiniz.
     </div>
-    <div class="t-rows" id="tRows"></div>
+    <div class="t-rows" id="tRows"><div class="t-row" id="tr1">
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0" oninput="capAra('tr1',this.value)" onfocus="capAra('tr1',this.value)" onblur="setTimeout(()=&gt;capKapat('tr1'),180)" autocomplete="off">
+          <div class="cap-dropdown" id="ddtr1">
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:48,&quot;fiyat&quot;:54})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀300mm · 48 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺54</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:60,&quot;fiyat&quot;:64})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀300mm · 60 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺64</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;TCG&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:96,&quot;fiyat&quot;:87})">
+      <div class="co-left">
+        <span class="co-title">TCG · ⌀300mm · 96 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺87</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.5,&quot;dis&quot;:60,&quot;fiyat&quot;:61})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀300mm · 60 diş <span style="font-size:10px;color:var(--text3);">(2.5mm)</span></span>
+      </div>
+      <span class="co-price">₺61</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.5,&quot;dis&quot;:72,&quot;fiyat&quot;:63})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀300mm · 72 diş <span style="font-size:10px;color:var(--text3);">(2.5mm)</span></span>
+      </div>
+      <span class="co-price">₺63</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.5,&quot;dis&quot;:96,&quot;fiyat&quot;:89})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀300mm · 96 diş <span style="font-size:10px;color:var(--text3);">(2.5mm)</span></span>
+      </div>
+      <span class="co-price">₺89</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;RP&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:28,&quot;fiyat&quot;:50})">
+      <div class="co-left">
+        <span class="co-title">RP · ⌀300mm · 28 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺50</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;MRP&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:24,&quot;fiyat&quot;:102})">
+      <div class="co-left">
+        <span class="co-title">MRP · ⌀300mm · 24 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺102</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr1',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:300,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:72,&quot;fiyat&quot;:60})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀300mm · 72 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺60</span>
+    </div>
+  </div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly="" style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"></div>
+      <button class="remove-row" onclick="tRowSil('tr1')">✕</button>
+    </div>
+  </div><div class="t-row" id="tr2">
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0" oninput="capAra('tr2',this.value)" onfocus="capAra('tr2',this.value)" onblur="setTimeout(()=&gt;capKapat('tr2'),180)" autocomplete="off">
+          <div class="cap-dropdown" id="ddtr2">
+    <div class="cap-opt" onmousedown="capSec('tr2',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:54,&quot;fiyat&quot;:56})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀350mm · 54 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺56</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr2',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:108,&quot;fiyat&quot;:105})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀350mm · 108 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺105</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr2',{&quot;tip&quot;:&quot;MRP&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:28,&quot;fiyat&quot;:50})">
+      <div class="co-left">
+        <span class="co-title">MRP · ⌀350mm · 28 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺50</span>
+    </div>
+  </div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly="" style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"></div>
+      <button class="remove-row" onclick="tRowSil('tr2')">✕</button>
+    </div>
+  </div><div class="t-row" id="tr3">
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0" oninput="capAra('tr3',this.value)" onfocus="capAra('tr3',this.value)" onblur="setTimeout(()=&gt;capKapat('tr3'),180)" autocomplete="off">
+          <div class="cap-dropdown" id="ddtr3">
+    <div class="cap-opt" onmousedown="capSec('tr3',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:450,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:72,&quot;fiyat&quot;:73})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀450mm · 72 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺73</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr3',{&quot;tip&quot;:&quot;MRP&quot;,&quot;cap&quot;:450,&quot;kalinlik&quot;:3.5,&quot;dis&quot;:32,&quot;fiyat&quot;:89})">
+      <div class="co-left">
+        <span class="co-title">MRP · ⌀450mm · 32 diş <span style="font-size:10px;color:var(--text3);">(3.5mm)</span></span>
+      </div>
+      <span class="co-price">₺89</span>
+    </div>
+  </div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly="" style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"></div>
+      <button class="remove-row" onclick="tRowSil('tr3')">✕</button>
+    </div>
+  </div><div class="t-row" id="tr4">
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0" oninput="capAra('tr4',this.value)" onfocus="capAra('tr4',this.value)" onblur="setTimeout(()=&gt;capKapat('tr4'),180)" autocomplete="off">
+          <div class="cap-dropdown" id="ddtr4">
+    <div class="cap-opt" onmousedown="capSec('tr4',{&quot;tip&quot;:&quot;HW&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:54,&quot;fiyat&quot;:56})">
+      <div class="co-left">
+        <span class="co-title">HW · ⌀350mm · 54 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺56</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr4',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:108,&quot;fiyat&quot;:105})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀350mm · 108 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺105</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr4',{&quot;tip&quot;:&quot;MRP&quot;,&quot;cap&quot;:350,&quot;kalinlik&quot;:2.8,&quot;dis&quot;:28,&quot;fiyat&quot;:50})">
+      <div class="co-left">
+        <span class="co-title">MRP · ⌀350mm · 28 diş <span style="font-size:10px;color:var(--text3);">(2.8mm)</span></span>
+      </div>
+      <span class="co-price">₺50</span>
+    </div>
+  </div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly="" style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"></div>
+      <button class="remove-row" onclick="tRowSil('tr4')">✕</button>
+    </div>
+  </div><div class="t-row" id="tr5">
+    <div class="t-row-grid">
+      <div class="field">
+        <label>Çap <span>(mm — listeden seç)</span></label>
+        <div class="cap-wrap">
+          <input type="number" class="cap-in" placeholder="Ör: 300" min="0" oninput="capAra('tr5',this.value)" onfocus="capAra('tr5',this.value)" onblur="setTimeout(()=&gt;capKapat('tr5'),180)" autocomplete="off">
+          <div class="cap-dropdown" id="ddtr5">
+    <div class="cap-opt" onmousedown="capSec('tr5',{&quot;tip&quot;:&quot;TCG&quot;,&quot;cap&quot;:125,&quot;kalinlik&quot;:2.2,&quot;dis&quot;:24,&quot;fiyat&quot;:33})">
+      <div class="co-left">
+        <span class="co-title">TCG · ⌀125mm · 24 diş <span style="font-size:10px;color:var(--text3);">(2.2mm)</span></span>
+      </div>
+      <span class="co-price">₺33</span>
+    </div>
+  
+    <div class="cap-opt" onmousedown="capSec('tr5',{&quot;tip&quot;:&quot;AP&quot;,&quot;cap&quot;:125,&quot;kalinlik&quot;:2.5,&quot;dis&quot;:24,&quot;fiyat&quot;:34})">
+      <div class="co-left">
+        <span class="co-title">AP · ⌀125mm · 24 diş <span style="font-size:10px;color:var(--text3);">(2.5mm)</span></span>
+      </div>
+      <span class="co-price">₺34</span>
+    </div>
+  </div>
+        </div>
+      </div>
+      <div class="field"><label>Tip</label><input type="text" class="t-tip" placeholder="HW" readonly="" style="background:var(--surface);color:var(--accent2);font-weight:600;cursor:default;"></div>
+      <div class="field"><label>Diş</label><input type="number" class="t-dis" placeholder="96" min="0"></div>
+      <div class="field"><label>Adet</label><input type="number" class="t-adet" placeholder="1" value="1" min="1"></div>
+      <div class="field"><label>Lazer ₺</label><input type="number" class="t-lazer" placeholder="0.00" min="0" step="0.01"></div>
+      <button class="remove-row" onclick="tRowSil('tr5')">✕</button>
+    </div>
+  </div></div>
     <button class="add-row-btn" onclick="testereEkle()">＋ Testere Ekle</button>
   </div>
 </div>
@@ -401,10 +687,60 @@ select option{background:#1a1d2e;}
 <button class="hesapla-btn" onclick="hesapla()" style="margin-bottom:16px;">Maliyeti Hesapla →</button>
 
 <!-- HIZLI SONUÇ -->
-<div id="hizliSonuc" style="display:none;margin-bottom:16px;"></div>
+<div id="hizliSonuc" style="margin-bottom: 16px;">
+    <div class="hizli-card">
+      <div class="hizli-head">
+        <span style="font-size:18px;">✅</span>
+        <h3>Hesaplama Sonucu</h3>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">620×2480 · 2.5mm · 4 levha · EUR/TRY ₺52.75</span>
+      </div>
+      <table class="hizli-table">
+        <thead><tr>
+          <th>Testere</th>
+          <th>Birim Maliyet</th>
+          <th>Uğur Karşılaştırması</th>
+        </tr></thead>
+        <tbody><tr>
+      <td>
+        <div class="ht-spec">AP · ⌀300mm · 96 diş</div>
+        <div class="ht-adet">×14 adet</div>
+      </td>
+      <td><span class="ht-maliyet">€8.08<span> / adet</span></span></td>
+      <td><span class="ht-ugur" title="2.5mm">€13.31</span> <span style="font-size:10px;color:var(--text3);">(2.5mm)</span>&nbsp;<span class="diff-badge cheaper">▼ €5.23 (%39) ucuz</span></td>
+    </tr><tr>
+      <td>
+        <div class="ht-spec">AP · ⌀350mm · 108 diş</div>
+        <div class="ht-adet">×5 adet</div>
+      </td>
+      <td><span class="ht-maliyet">€10.71<span> / adet</span></span></td>
+      <td><span class="ht-ugur" title="2.4–2.6mm arası tahmin">€18.25</span> <span style="font-size:10px;color:var(--text3);">(2.4–2.6mm arası tahmin)</span>&nbsp;<span class="diff-badge cheaper">▼ €7.54 (%41) ucuz</span></td>
+    </tr><tr>
+      <td>
+        <div class="ht-spec">HW · ⌀450mm · 72 diş</div>
+        <div class="ht-adet">×10 adet</div>
+      </td>
+      <td><span class="ht-maliyet">€16.11<span> / adet</span></span></td>
+      <td><span class="ht-ugur" title="2.6mm (en yakın)">€24.90</span> <span style="font-size:10px;color:var(--text3);">(2.6mm (en yakın))</span>&nbsp;<span class="diff-badge cheaper">▼ €8.79 (%35) ucuz</span></td>
+    </tr><tr>
+      <td>
+        <div class="ht-spec">MRP · ⌀350mm · 28 diş</div>
+        <div class="ht-adet">×1 adet</div>
+      </td>
+      <td><span class="ht-maliyet">€9.91<span> / adet</span></span></td>
+      <td><span class="ht-ugur" title="2.4–2.6mm arası tahmin">€18.25</span> <span style="font-size:10px;color:var(--text3);">(2.4–2.6mm arası tahmin)</span>&nbsp;<span class="diff-badge cheaper">▼ €8.34 (%46) ucuz</span></td>
+    </tr><tr>
+      <td>
+        <div class="ht-spec">AP · ⌀125mm · 24 diş</div>
+        <div class="ht-adet">×49 adet</div>
+      </td>
+      <td><span class="ht-maliyet">€1.73<span> / adet</span></span></td>
+      <td><span class="ht-ugur" title="2.5mm">€4.46</span> <span style="font-size:10px;color:var(--text3);">(2.5mm)</span>&nbsp;<span class="diff-badge cheaper">▼ €2.73 (%61) ucuz</span></td>
+    </tr></tbody>
+      </table>
+    </div></div>
 
 <!-- DETAYLI SONUÇ (katlanabilir) -->
-<div id="sonucCard" class="card" style="display:none;">
+<div id="sonucCard" class="card" style="">
   <div class="card-head" onclick="detayToggle()" style="cursor:pointer;user-select:none;">
     <div class="cnum" style="background:rgba(99,102,241,0.15);border-color:var(--accent);color:var(--accent2);">≡</div>
     <h2>Detaylı Hesaplama</h2>
@@ -413,10 +749,89 @@ select option{background:#1a1d2e;}
   <div id="detayIcerik" style="display:none;">
     <div class="card-body">
       <div class="result-box">
-        <div class="rlines" id="rLines"></div>
+        <div class="rlines" id="rLines">
+    <div class="rline"><span class="rl">Levha</span><span class="rv">620×2480 · 2.5mm</span></div>
+    <div class="rline"><span class="rl">Levha Adedi</span><span class="rv" style="color:var(--amber);font-weight:700;">4 adet</span></div>
+    <div class="rline"><span class="rl">Birim Levha Maliyeti</span><span class="rv">€74.73</span></div>
+    <div class="rline"><span class="rl">Toplam Levha (4×€74.73)</span><span class="rv">€298.90</span></div>
+    <div class="rline"><span class="rl">Toplam Doğrultma (4×€11.50)</span><span class="rv">€46.00</span></div>
+    <div class="rline"><span class="rl">Levha + Doğrultma</span><span class="rv" style="color:var(--accent2);">€344.90</span></div>
+    <div class="rline"><span class="rl">EUR/TRY Kuru</span><span class="rv">₺52.75</span></div>
+    <div class="rline"><span class="rl">Toplam Alan</span><span class="rv">3.758.621 mm²</span></div>
+  </div>
         <div class="sep"></div>
         <p style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Testere Başına Döküm</p>
-        <div class="result-items" id="rItems"></div>
+        <div class="result-items" id="rItems">
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">AP · ⌀300mm · 96 diş <span style="font-size:12px;color:var(--text3);">×14 adet</span></div>
+        <div class="ri-total">€8.0787<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (26.3%)</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">€5.6212/adet · toplam €78.70</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">€0.8651/adet · toplam €12.11</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺1176.00 ÷ kur)</span><span class="v">€1.5924/adet · toplam €22.29</span></div>
+        <div class="ri-sum"><span class="k">Toplam (14 adet)</span><span class="v">€113.10</span></div>
+      </div>
+    </div>
+  
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">AP · ⌀350mm · 108 diş <span style="font-size:12px;color:var(--text3);">×5 adet</span></div>
+        <div class="ri-total">€10.7054<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (12.8%)</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">€7.6511/adet · toplam €38.26</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">€1.1775/adet · toplam €5.89</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺495.00 ÷ kur)</span><span class="v">€1.8768/adet · toplam €9.38</span></div>
+        <div class="ri-sum"><span class="k">Toplam (5 adet)</span><span class="v">€53.53</span></div>
+      </div>
+    </div>
+  
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">HW · ⌀450mm · 72 diş <span style="font-size:12px;color:var(--text3);">×10 adet</span></div>
+        <div class="ri-total">€16.1108<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (42.3%)</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">€12.6477/adet · toplam €126.48</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">€1.9465/adet · toplam €19.46</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺800.00 ÷ kur)</span><span class="v">€1.5166/adet · toplam €15.17</span></div>
+        <div class="ri-sum"><span class="k">Toplam (10 adet)</span><span class="v">€161.11</span></div>
+      </div>
+    </div>
+  
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">MRP · ⌀350mm · 28 diş <span style="font-size:12px;color:var(--text3);">×1 adet</span></div>
+        <div class="ri-total">€9.9091<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (2.6%)</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">€7.6511/adet · toplam €7.65</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">€1.1775/adet · toplam €1.18</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺57.00 ÷ kur)</span><span class="v">€1.0806/adet · toplam €1.08</span></div>
+        <div class="ri-sum"><span class="k">Toplam (1 adet)</span><span class="v">€9.91</span></div>
+      </div>
+    </div>
+  
+    <div class="ri">
+      <div class="ri-head">
+        <div class="ri-title">AP · ⌀125mm · 24 diş <span style="font-size:12px;color:var(--text3);">×49 adet</span></div>
+        <div class="ri-total">€1.7327<span style="font-size:12px;color:var(--text3);font-weight:400;"> / adet</span></div>
+      </div>
+      <div class="ri-bd">
+        <div class="ri-line"><span class="k">Alan payı (16.0%)</span><span></span></div>
+        <div class="ri-line"><span class="k">Levha payı</span><span class="v">€0.9759/adet · toplam €47.82</span></div>
+        <div class="ri-line"><span class="k">Doğrultma payı</span><span class="v">€0.1502/adet · toplam €7.36</span></div>
+        <div class="ri-line"><span class="k">Lazer kesim (₺1568.00 ÷ kur)</span><span class="v">€0.6066/adet · toplam €29.73</span></div>
+        <div class="ri-sum"><span class="k">Toplam (49 adet)</span><span class="v">€84.90</span></div>
+      </div>
+    </div>
+  </div>
       </div>
     </div>
   </div>
@@ -425,7 +840,7 @@ select option{background:#1a1d2e;}
 </div><!-- /anaIcerik wrap -->
 
 <!-- ════════════ ADMİN MODAL ════════════ -->
-<div class="modal-bg" id="adminModal">
+<div class="modal-bg open" id="adminModal">
   <div class="modal">
     <div class="modal-head">
       <h2>🔐 Yönetim Paneli</h2>
@@ -433,59 +848,364 @@ select option{background:#1a1d2e;}
     </div>
     <div class="modal-body">
       <!-- Lock -->
-      <div class="lock" id="lockEl">
+      <div class="lock" id="lockEl" style="display: none;">
         <div class="lock-icon">🔒</div>
         <h3>Yönetim Paneli</h3>
         <p>Devam etmek için şifreyi girin</p>
-        <input class="pin-in" type="password" id="pinIn" maxlength="6" placeholder="••••" onkeyup="if(event.key==='Enter')pinKontrol()"/>
+        <input class="pin-in" type="password" id="pinIn" maxlength="6" placeholder="••••" onkeyup="if(event.key==='Enter')pinKontrol()">
         <p class="pin-err" id="pinErr"></p>
         <button class="save-btn" style="margin-top:12px;" onclick="pinKontrol()">Giriş</button>
       </div>
       <!-- İçerik -->
-      <div id="adminCont" style="display:none;">
+      <div id="adminCont" style="">
         <div class="atabs">
-          <button class="atab active" id="atab-levha" onclick="adminTab('levha')">📋 Levha Listesi</button>
+          <button class="atab" id="atab-levha" onclick="adminTab('levha')">📋 Levha Listesi</button>
           <button class="atab" id="atab-lazer" onclick="adminTab('lazer')">✂️ Lazer Fiyatları</button>
-          <button class="atab" id="atab-veri" onclick="adminTab('veri')">💾 Veri Aktar</button>
+          <button class="atab active" id="atab-veri" onclick="adminTab('veri')">💾 Veri Aktar</button>
         </div>
 
         <!-- Levha panel -->
-        <div id="apanel-levha">
+        <div id="apanel-levha" style="display: none;">
           <table class="atable">
             <thead><tr><th>Ölçü</th><th>Kal.</th><th>Kg</th><th>€/kg</th><th>Top.€</th><th>Doğr.€</th><th></th></tr></thead>
-            <tbody id="aLevhaTbody"></tbody>
+            <tbody id="aLevhaTbody">
+    <tr>
+      <td style="white-space:nowrap;">310×2050</td>
+      <td><input type="number" value="1.8" step="0.1" onchange="aLevhaG(0,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="9" step="0.01" placeholder="~8.98" onchange="aLevhaG(0,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.25" step="0.01" onchange="aLevhaG(0,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="20.25" step="0.01" onchange="aLevhaG(0,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="2.93" step="0.01" onchange="aLevhaG(0,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(0)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">308×2164</td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLevhaG(1,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="11.3" step="0.01" placeholder="~11.51" onchange="aLevhaG(1,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.1" step="0.01" onchange="aLevhaG(1,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="23.73" step="0.01" onchange="aLevhaG(1,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="5.46" step="0.01" onchange="aLevhaG(1,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(1)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">622×2000</td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLevhaG(2,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="24.5" step="0.01" placeholder="~24.41" onchange="aLevhaG(2,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.35" step="0.01" onchange="aLevhaG(2,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="57.58" step="0.01" onchange="aLevhaG(2,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="4.88" step="0.01" onchange="aLevhaG(2,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(2)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">620×2480</td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLevhaG(3,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="30.5" step="0.01" placeholder="~30.18" onchange="aLevhaG(3,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.1" step="0.01" onchange="aLevhaG(3,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="64.05" step="0.01" onchange="aLevhaG(3,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="12.1" step="0.01" onchange="aLevhaG(3,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(3)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">618×2488</td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLevhaG(4,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="" step="0.01" placeholder="~30.18" onchange="aLevhaG(4,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="" step="0.01" onchange="aLevhaG(4,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="" step="0.01" onchange="aLevhaG(4,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="12.1" step="0.01" onchange="aLevhaG(4,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(4)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">455×1385</td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLevhaG(5,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="14.15" step="0.01" placeholder="~13.85" onchange="aLevhaG(5,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.35" step="0.01" onchange="aLevhaG(5,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="33.25" step="0.01" onchange="aLevhaG(5,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="4.55" step="0.01" onchange="aLevhaG(5,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(5)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">620×2480</td>
+      <td><input type="number" value="3.5" step="0.1" onchange="aLevhaG(6,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="42" step="0.01" placeholder="~42.25" onchange="aLevhaG(6,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.55" step="0.01" onchange="aLevhaG(6,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="107.1" step="0.01" onchange="aLevhaG(6,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="13.62" step="0.01" onchange="aLevhaG(6,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(6)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td style="white-space:nowrap;">620×2480</td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLevhaG(7,'kalinlik',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="30.15" step="0.01" placeholder="~30.18" onchange="aLevhaG(7,'kg',this.value)" style="width:65px;" title="Boş bırakılırsa boyutlardan otomatik hesaplanır"></td>
+      <td><input type="number" value="2.45" step="0.01" onchange="aLevhaG(7,'kgEur',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="73.8675" step="0.01" onchange="aLevhaG(7,'topEur',this.value)" style="width:70px;"></td>
+      <td><input type="number" value="11.5" step="0.01" onchange="aLevhaG(7,'dograEur',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLevhaSil(7)">Sil</button></td>
+    </tr>
+  </tbody>
           </table>
           <div class="add-form">
-            <div class="f"><label>En</label><input type="number" id="naEn" placeholder="620" oninput="levhaKgPlaceholder()"/></div>
-            <div class="f"><label>Boy</label><input type="number" id="naBoy" placeholder="2480" oninput="levhaKgPlaceholder()"/></div>
-            <div class="f"><label>Kal.(mm)</label><input type="number" id="naKal" placeholder="2.5" step="0.1" oninput="levhaKgPlaceholder()"/></div>
-            <div class="f"><label>Kg</label><input type="number" id="naKg" placeholder="30.5" step="0.01"/></div>
-            <div class="f"><label>€/kg</label><input type="number" id="naKgE" placeholder="2.10" step="0.01"/></div>
-            <div class="f"><label>Doğr.€</label><input type="number" id="naDogru" placeholder="12.10" step="0.01"/></div>
+            <div class="f"><label>En</label><input type="number" id="naEn" placeholder="620" oninput="levhaKgPlaceholder()"></div>
+            <div class="f"><label>Boy</label><input type="number" id="naBoy" placeholder="2480" oninput="levhaKgPlaceholder()"></div>
+            <div class="f"><label>Kal.(mm)</label><input type="number" id="naKal" placeholder="2.5" step="0.1" oninput="levhaKgPlaceholder()"></div>
+            <div class="f"><label>Kg</label><input type="number" id="naKg" placeholder="" step="0.01"></div>
+            <div class="f"><label>€/kg</label><input type="number" id="naKgE" placeholder="2.10" step="0.01"></div>
+            <div class="f"><label>Doğr.€</label><input type="number" id="naDogru" placeholder="12.10" step="0.01"></div>
             <button class="save-btn" onclick="levhaEkleAdmin()">+ Ekle</button>
           </div>
         </div>
 
         <!-- Lazer panel -->
-        <div id="apanel-lazer" style="display:none;">
+        <div id="apanel-lazer" style="display: none;">
           <table class="atable">
             <thead><tr><th>Tip</th><th>Çap</th><th>Kal.</th><th>Diş</th><th>₺ Fiyat</th><th></th></tr></thead>
-            <tbody id="aLazerTbody"></tbody>
+            <tbody id="aLazerTbody">
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="230" onchange="aLazerG(0,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(0,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="40" onchange="aLazerG(0,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="40" step="0.01" onchange="aLazerG(0,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(0)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(1,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(1,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="48" onchange="aLazerG(1,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="54" step="0.01" onchange="aLazerG(1,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(1)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(2,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(2,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="60" onchange="aLazerG(2,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="64" step="0.01" onchange="aLazerG(2,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(2)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="350" onchange="aLazerG(3,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLazerG(3,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="54" onchange="aLazerG(3,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="56" step="0.01" onchange="aLazerG(3,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(3)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="400" onchange="aLazerG(4,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLazerG(4,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(4,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="73" step="0.01" onchange="aLazerG(4,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(4)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="450" onchange="aLazerG(5,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLazerG(5,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(5,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="73" step="0.01" onchange="aLazerG(5,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(5)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="500" onchange="aLazerG(6,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="3.5" step="0.1" onchange="aLazerG(6,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(6,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="97" step="0.01" onchange="aLazerG(6,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(6)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="550" onchange="aLazerG(7,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="3.5" step="0.1" onchange="aLazerG(7,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(7,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="109" step="0.01" onchange="aLazerG(7,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(7)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">TCG</b></td>
+      <td><input type="number" value="125" onchange="aLazerG(8,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(8,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="24" onchange="aLazerG(8,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="33" step="0.01" onchange="aLazerG(8,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(8)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">TCG</b></td>
+      <td><input type="number" value="250" onchange="aLazerG(9,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(9,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="80" onchange="aLazerG(9,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="52" step="0.01" onchange="aLazerG(9,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(9)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">TCG</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(10,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(10,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="96" onchange="aLazerG(10,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="87" step="0.01" onchange="aLazerG(10,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(10)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="125" onchange="aLazerG(11,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(11,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="24" onchange="aLazerG(11,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="34" step="0.01" onchange="aLazerG(11,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(11)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="250" onchange="aLazerG(12,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(12,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="80" onchange="aLazerG(12,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="55" step="0.01" onchange="aLazerG(12,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(12)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(13,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(13,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="60" onchange="aLazerG(13,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="61" step="0.01" onchange="aLazerG(13,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(13)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(14,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(14,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(14,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="63" step="0.01" onchange="aLazerG(14,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(14)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(15,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(15,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="96" onchange="aLazerG(15,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="89" step="0.01" onchange="aLazerG(15,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(15)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="350" onchange="aLazerG(16,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLazerG(16,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="108" onchange="aLazerG(16,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="105" step="0.01" onchange="aLazerG(16,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(16)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">RP</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(17,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(17,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="28" onchange="aLazerG(17,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="50" step="0.01" onchange="aLazerG(17,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(17)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">MRP</b></td>
+      <td><input type="number" value="150" onchange="aLazerG(18,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(18,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="32" onchange="aLazerG(18,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="100" step="0.01" onchange="aLazerG(18,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(18)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">MRP</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(19,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(19,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="24" onchange="aLazerG(19,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="102" step="0.01" onchange="aLazerG(19,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(19)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">MRP</b></td>
+      <td><input type="number" value="350" onchange="aLazerG(20,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.8" step="0.1" onchange="aLazerG(20,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="28" onchange="aLazerG(20,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="50" step="0.01" onchange="aLazerG(20,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(20)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">MRP</b></td>
+      <td><input type="number" value="450" onchange="aLazerG(21,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="3.5" step="0.1" onchange="aLazerG(21,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="32" onchange="aLazerG(21,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="89" step="0.01" onchange="aLazerG(21,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(21)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">HW</b></td>
+      <td><input type="number" value="300" onchange="aLazerG(22,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.2" step="0.1" onchange="aLazerG(22,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="72" onchange="aLazerG(22,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="60" step="0.01" onchange="aLazerG(22,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(22)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">AP</b></td>
+      <td><input type="number" value="450" onchange="aLazerG(23,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(23,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="56" onchange="aLazerG(23,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="80" step="0.01" onchange="aLazerG(23,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(23)">Sil</button></td>
+    </tr>
+  
+    <tr>
+      <td><b style="color:var(--accent2);">RP</b></td>
+      <td><input type="number" value="350" onchange="aLazerG(24,'cap',this.value)" style="width:60px;"></td>
+      <td><input type="number" value="2.5" step="0.1" onchange="aLazerG(24,'kalinlik',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="32" onchange="aLazerG(24,'dis',this.value)" style="width:55px;"></td>
+      <td><input type="number" value="57" step="0.01" onchange="aLazerG(24,'fiyat',this.value)" style="width:65px;"></td>
+      <td><button class="del-btn" onclick="aLazerSil(24)">Sil</button></td>
+    </tr>
+  </tbody>
           </table>
           <div class="add-form">
             <div class="f"><label>Tip</label>
               <select id="nlTip"><option>HW</option><option>TCG</option><option>AP</option><option>RP</option><option>MRP</option></select>
             </div>
-            <div class="f"><label>Çap</label><input type="number" id="nlCap" placeholder="300"/></div>
-            <div class="f"><label>Kal.</label><input type="number" id="nlKal" placeholder="2.5" step="0.1"/></div>
-            <div class="f"><label>Diş</label><input type="number" id="nlDis" placeholder="96"/></div>
-            <div class="f"><label>₺ Fiyat</label><input type="number" id="nlFiyat" placeholder="89"/></div>
+            <div class="f"><label>Çap</label><input type="number" id="nlCap" placeholder="300"></div>
+            <div class="f"><label>Kal.</label><input type="number" id="nlKal" placeholder="2.5" step="0.1"></div>
+            <div class="f"><label>Diş</label><input type="number" id="nlDis" placeholder="96"></div>
+            <div class="f"><label>₺ Fiyat</label><input type="number" id="nlFiyat" placeholder="89"></div>
             <button class="save-btn" onclick="lazerEkleAdmin()">+ Ekle</button>
           </div>
         </div>
 
         <!-- Veri Aktarım paneli -->
-        <div id="apanel-veri" style="display:none;">
+        <div id="apanel-veri" style="">
           <div style="display:grid;gap:16px;">
 
             <!-- GitHub için HTML İndir -->
@@ -506,10 +1226,9 @@ select option{background:#1a1d2e;}
             <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;">
               <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">📥 İçe Aktar</p>
               <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Daha önce dışa aktarılan JSON dosyasını seç. Mevcut veriler bu dosyadakilerle değiştirilir.</p>
-              <label style="display:block;width:100%;padding:10px;background:var(--surface3);border:1.5px dashed var(--border2);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:13px;color:var(--accent2);transition:all .15s;"
-                     onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
+              <label style="display:block;width:100%;padding:10px;background:var(--surface3);border:1.5px dashed var(--border2);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:13px;color:var(--accent2);transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
                 📂 JSON Dosyası Seç
-                <input type="file" accept=".json" onchange="veriIceAktar(event)" style="display:none;"/>
+                <input type="file" accept=".json" onchange="veriIceAktar(event)" style="display:none;">
               </label>
               <div id="aktarSonuc" style="margin-top:10px;font-size:12px;min-height:18px;"></div>
             </div>
@@ -539,39 +1258,8 @@ select option{background:#1a1d2e;}
 
 <script>
 /* ══ VERİ ══ */
-const LEVHA_D=[
-  {en:310,boy:2050,kalinlik:1.8,kg:9,kgEur:2.25,topEur:20.25,dograEur:2.93},
-  {en:308,boy:2164,kalinlik:2.2,kg:11.3,kgEur:2.10,topEur:23.73,dograEur:5.46},
-  {en:622,boy:2000,kalinlik:2.5,kg:24.5,kgEur:2.35,topEur:57.58,dograEur:4.88},
-  {en:620,boy:2480,kalinlik:2.5,kg:30.5,kgEur:2.10,topEur:64.05,dograEur:12.10},
-  {en:618,boy:2488,kalinlik:2.5,kg:null,kgEur:null,topEur:null,dograEur:12.10},
-  {en:455,boy:1385,kalinlik:2.8,kg:14.15,kgEur:2.35,topEur:33.25,dograEur:4.55},
-  {en:620,boy:2480,kalinlik:3.5,kg:42,kgEur:2.55,topEur:107.10,dograEur:13.62},
-];
-const LAZER_D=[
-  {tip:'HW',cap:230,kalinlik:2.2,dis:40,fiyat:40},
-  {tip:'HW',cap:300,kalinlik:2.2,dis:48,fiyat:54},
-  {tip:'HW',cap:300,kalinlik:2.2,dis:60,fiyat:64},
-  {tip:'HW',cap:350,kalinlik:2.8,dis:54,fiyat:56},
-  {tip:'HW',cap:400,kalinlik:2.8,dis:72,fiyat:73},
-  {tip:'HW',cap:450,kalinlik:2.8,dis:72,fiyat:73},
-  {tip:'HW',cap:500,kalinlik:3.5,dis:72,fiyat:97},
-  {tip:'HW',cap:550,kalinlik:3.5,dis:72,fiyat:109},
-  {tip:'TCG',cap:125,kalinlik:2.2,dis:24,fiyat:33},
-  {tip:'TCG',cap:250,kalinlik:2.2,dis:80,fiyat:52},
-  {tip:'TCG',cap:300,kalinlik:2.2,dis:96,fiyat:87},
-  {tip:'AP',cap:125,kalinlik:2.5,dis:24,fiyat:34},
-  {tip:'AP',cap:250,kalinlik:2.5,dis:80,fiyat:55},
-  {tip:'AP',cap:300,kalinlik:2.5,dis:60,fiyat:61},
-  {tip:'AP',cap:300,kalinlik:2.5,dis:72,fiyat:63},
-  {tip:'AP',cap:300,kalinlik:2.5,dis:96,fiyat:89},
-  {tip:'AP',cap:350,kalinlik:2.8,dis:108,fiyat:105},
-  {tip:'RP',cap:300,kalinlik:2.2,dis:28,fiyat:50},
-  {tip:'MRP',cap:150,kalinlik:2.2,dis:32,fiyat:100},
-  {tip:'MRP',cap:300,kalinlik:2.2,dis:24,fiyat:102},
-  {tip:'MRP',cap:350,kalinlik:2.8,dis:28,fiyat:50},
-  {tip:'MRP',cap:450,kalinlik:3.5,dis:32,fiyat:89},
-];
+const LEVHA_D=[{"en":310,"boy":2050,"kalinlik":1.8,"kg":9,"kgEur":2.25,"topEur":20.25,"dograEur":2.93},{"en":308,"boy":2164,"kalinlik":2.2,"kg":11.3,"kgEur":2.1,"topEur":23.73,"dograEur":5.46},{"en":622,"boy":2000,"kalinlik":2.5,"kg":24.5,"kgEur":2.35,"topEur":57.58,"dograEur":4.88},{"en":620,"boy":2480,"kalinlik":2.5,"kg":30.5,"kgEur":2.1,"topEur":64.05,"dograEur":12.1},{"en":618,"boy":2488,"kalinlik":2.5,"kg":null,"kgEur":null,"topEur":null,"dograEur":12.1},{"en":455,"boy":1385,"kalinlik":2.8,"kg":14.15,"kgEur":2.35,"topEur":33.25,"dograEur":4.55},{"en":620,"boy":2480,"kalinlik":3.5,"kg":42,"kgEur":2.55,"topEur":107.1,"dograEur":13.62},{"en":620,"boy":2480,"kalinlik":2.5,"kg":30.15,"kgEur":2.45,"topEur":73.8675,"dograEur":11.5}];
+const LAZER_D=[{"tip":"HW","cap":230,"kalinlik":2.2,"dis":40,"fiyat":40},{"tip":"HW","cap":300,"kalinlik":2.2,"dis":48,"fiyat":54},{"tip":"HW","cap":300,"kalinlik":2.2,"dis":60,"fiyat":64},{"tip":"HW","cap":350,"kalinlik":2.8,"dis":54,"fiyat":56},{"tip":"HW","cap":400,"kalinlik":2.8,"dis":72,"fiyat":73},{"tip":"HW","cap":450,"kalinlik":2.8,"dis":72,"fiyat":73},{"tip":"HW","cap":500,"kalinlik":3.5,"dis":72,"fiyat":97},{"tip":"HW","cap":550,"kalinlik":3.5,"dis":72,"fiyat":109},{"tip":"TCG","cap":125,"kalinlik":2.2,"dis":24,"fiyat":33},{"tip":"TCG","cap":250,"kalinlik":2.2,"dis":80,"fiyat":52},{"tip":"TCG","cap":300,"kalinlik":2.2,"dis":96,"fiyat":87},{"tip":"AP","cap":125,"kalinlik":2.5,"dis":24,"fiyat":34},{"tip":"AP","cap":250,"kalinlik":2.5,"dis":80,"fiyat":55},{"tip":"AP","cap":300,"kalinlik":2.5,"dis":60,"fiyat":61},{"tip":"AP","cap":300,"kalinlik":2.5,"dis":72,"fiyat":63},{"tip":"AP","cap":300,"kalinlik":2.5,"dis":96,"fiyat":89},{"tip":"AP","cap":350,"kalinlik":2.8,"dis":108,"fiyat":105},{"tip":"RP","cap":300,"kalinlik":2.2,"dis":28,"fiyat":50},{"tip":"MRP","cap":150,"kalinlik":2.2,"dis":32,"fiyat":100},{"tip":"MRP","cap":300,"kalinlik":2.2,"dis":24,"fiyat":102},{"tip":"MRP","cap":350,"kalinlik":2.8,"dis":28,"fiyat":50},{"tip":"MRP","cap":450,"kalinlik":3.5,"dis":32,"fiyat":89},{"tip":"HW","cap":300,"kalinlik":2.2,"dis":72,"fiyat":60},{"tip":"AP","cap":450,"kalinlik":2.5,"dis":56,"fiyat":80},{"tip":"RP","cap":350,"kalinlik":2.5,"dis":32,"fiyat":57}];
 const gL=()=>JSON.parse(localStorage.getItem('levhalar')||'null')||LEVHA_D;
 const gLz=()=>JSON.parse(localStorage.getItem('lazerler')||'null')||LAZER_D;
 const sL=d=>localStorage.setItem('levhalar',JSON.stringify(d));
@@ -580,7 +1268,7 @@ const sLz=d=>localStorage.setItem('lazerler',JSON.stringify(d));
 /* ══ VERSİYON KONTROLÜ ══
    Bu sayıyı her fiyat/veri güncellemesinde 1 artır.
    GitHub'a push edince tüm kullanıcılar otomatik yeni verileri alır. */
-const DATA_VERSIYON = 1;
+const DATA_VERSIYON = 2;
 
 function versionKontrol(){
   const kayitli = localStorage.getItem('dataVersiyon');
@@ -868,24 +1556,7 @@ function levhaTopEur(l){
 }
 
 /* ══ UĞUR VERİSİ ══ */
-const UGUR_D=[
-  {cap:120,govde:3.9,fiyat:3.48},{cap:121,govde:2.2,fiyat:4.29},{cap:125,govde:2.5,fiyat:4.46},
-  {cap:161,govde:4.4,fiyat:6.44},{cap:200,govde:2.5,fiyat:10.30},{cap:210,govde:1.8,fiyat:7.73},
-  {cap:230,govde:1.8,fiyat:7.73},{cap:250,govde:2.2,fiyat:8.58},{cap:250,govde:2.6,fiyat:8.93},
-  {cap:300,govde:2.2,fiyat:12.02},{cap:300,govde:2.5,fiyat:13.31},
-  {cap:350,govde:2.2,fiyat:18.89},{cap:350,govde:2.4,fiyat:19.32},{cap:350,govde:2.6,fiyat:17.17},
-  {cap:350,govde:2.8,fiyat:17.17},{cap:350,govde:3.0,fiyat:17.17},
-  {cap:400,govde:3.0,fiyat:21.46},{cap:400,govde:3.2,fiyat:23.18},
-  {cap:420,govde:2.2,fiyat:20.60},{cap:420,govde:3.2,fiyat:24.04},
-  {cap:450,govde:2.6,fiyat:24.90},{cap:450,govde:2.8,fiyat:27.04},{cap:450,govde:3.0,fiyat:25.75},
-  {cap:450,govde:3.2,fiyat:27.47},{cap:450,govde:3.6,fiyat:28.33},{cap:450,govde:4.8,fiyat:35.20},
-  {cap:500,govde:2.8,fiyat:30.22},{cap:500,govde:3.2,fiyat:31.33},{cap:500,govde:3.4,fiyat:30.90},
-  {cap:500,govde:3.8,fiyat:32.19},{cap:500,govde:4.8,fiyat:39.49},
-  {cap:520,govde:3.5,fiyat:33.05},
-  {cap:550,govde:2.9,fiyat:33.48},{cap:550,govde:3.0,fiyat:35.20},{cap:550,govde:3.4,fiyat:36.91},
-  {cap:550,govde:3.6,fiyat:38.63},{cap:550,govde:4.8,fiyat:42.06},
-  {cap:600,govde:3.0,fiyat:33.91},{cap:600,govde:3.4,fiyat:36.05},{cap:600,govde:3.6,fiyat:37.77},
-];
+const UGUR_D=[{"cap":120,"govde":3.9,"fiyat":3.48},{"cap":121,"govde":2.2,"fiyat":4.29},{"cap":125,"govde":2.5,"fiyat":4.46},{"cap":161,"govde":4.4,"fiyat":6.44},{"cap":200,"govde":2.5,"fiyat":10.3},{"cap":210,"govde":1.8,"fiyat":7.73},{"cap":230,"govde":1.8,"fiyat":7.73},{"cap":250,"govde":2.2,"fiyat":8.58},{"cap":250,"govde":2.6,"fiyat":8.93},{"cap":300,"govde":2.2,"fiyat":12.02},{"cap":300,"govde":2.5,"fiyat":13.31},{"cap":350,"govde":2.2,"fiyat":18.89},{"cap":350,"govde":2.4,"fiyat":19.32},{"cap":350,"govde":2.6,"fiyat":17.17},{"cap":350,"govde":2.8,"fiyat":17.17},{"cap":350,"govde":3,"fiyat":17.17},{"cap":400,"govde":3,"fiyat":21.46},{"cap":400,"govde":3.2,"fiyat":23.18},{"cap":420,"govde":2.2,"fiyat":20.6},{"cap":420,"govde":3.2,"fiyat":24.04},{"cap":450,"govde":2.6,"fiyat":24.9},{"cap":450,"govde":2.8,"fiyat":27.04},{"cap":450,"govde":3,"fiyat":25.75},{"cap":450,"govde":3.2,"fiyat":27.47},{"cap":450,"govde":3.6,"fiyat":28.33},{"cap":450,"govde":4.8,"fiyat":35.2},{"cap":500,"govde":2.8,"fiyat":30.22},{"cap":500,"govde":3.2,"fiyat":31.33},{"cap":500,"govde":3.4,"fiyat":30.9},{"cap":500,"govde":3.8,"fiyat":32.19},{"cap":500,"govde":4.8,"fiyat":39.49},{"cap":520,"govde":3.5,"fiyat":33.05},{"cap":550,"govde":2.9,"fiyat":33.48},{"cap":550,"govde":3,"fiyat":35.2},{"cap":550,"govde":3.4,"fiyat":36.91},{"cap":550,"govde":3.6,"fiyat":38.63},{"cap":550,"govde":4.8,"fiyat":42.06},{"cap":600,"govde":3,"fiyat":33.91},{"cap":600,"govde":3.4,"fiyat":36.05},{"cap":600,"govde":3.6,"fiyat":37.77}];
 const gU=()=>JSON.parse(localStorage.getItem('ugur')||'null')||UGUR_D;
 const sU=d=>localStorage.setItem('ugur',JSON.stringify(d));
 
@@ -1203,5 +1874,6 @@ function lazerEkleAdmin(){
   ['nlCap','nlKal','nlDis','nlFiyat'].forEach(id=>document.getElementById(id).value='');
 }
 </script>
-</body>
-</html>
+
+
+<veepn-lock-screen><style>@font-face{font-family:FigtreeVF;src:url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2 supports variations"),url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2-variations");font-weight:100 1000;font-display:swap}</style></veepn-lock-screen></body></html>
